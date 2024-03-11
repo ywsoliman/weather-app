@@ -16,4 +16,5 @@
     <string name="humidity_icon">Humidity Icon</string>
     <string name="pressure_icon">Pressure Icon</string>
     <string name="cloud_icon">Cloud Icon</string>
+    <string name="degree_symbol">°</string>
 </resources>
