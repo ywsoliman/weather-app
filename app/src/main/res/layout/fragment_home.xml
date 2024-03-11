@@ -95,7 +95,7 @@
                     android:id="@+id/currentState"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.currentWeather.weather[0].main}"
+                    android:text="@{viewModel.currentWeather.weather[0].description}"
                     android:textSize="32sp"
                     app:layout_constraintEnd_toEndOf="@+id/currentTemp"
                     app:layout_constraintStart_toStartOf="@+id/currentTemp"

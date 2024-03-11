@@ -26,4 +26,15 @@ class Repository private constructor(
 
     }
 
+    override suspend fun getCurrentWeather(
+        lat: Double,
+        lon: Double,
+        apiKey: String,
+        units: String?,
+        lang: String?
+    ): CurrentWeatherResponse {
+        return remoteDataSource.getCurrentWeather(lat, lon, apiKey, units, lang)
+    }
+
+
 }
