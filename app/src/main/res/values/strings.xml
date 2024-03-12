@@ -10,11 +10,14 @@
     <string name="humidity">Humidity</string>
     <string name="pressure">Pressure</string>
     <string name="cloud">Cloud</string>
+    <string name="location">%1$s, %2$s</string>
+    <string name="temperature">%1$s°</string>
     <string name="location_icon">Location Icon</string>
     <string name="current_weather_icon">Current Weather Icon</string>
     <string name="air_icon">Air Icon</string>
     <string name="humidity_icon">Humidity Icon</string>
     <string name="pressure_icon">Pressure Icon</string>
     <string name="cloud_icon">Cloud Icon</string>
-    <string name="degree_symbol">°</string>
+    <string name="today">Today</string>
+    <string name="current_weather_time_icon">Current Weather Time Icon</string>
 </resources>

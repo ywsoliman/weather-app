@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="currentTime"
+            type="com.example.weatherapp.models.ForecastResponse.Data" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="16dp"
+        app:cardBackgroundColor="?colorSurfaceContainerHigh"
+        app:cardCornerRadius="16dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:getTime="@{currentTime.dt_txt}"
+                tools:text="2 AM" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@string/current_weather_time_icon"
+                app:url="@{currentTime.weather[0].icon}"
+                tools:src="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/degreeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{@string/temperature(String.valueOf(Math.round(currentTime.main.temp)))}"
+                tools:text="13°" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

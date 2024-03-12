@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.CurrentWeatherResponse
+import com.example.weatherapp.models.ForecastResponse
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.util.Constants
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,10 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     val currentWeather: LiveData<CurrentWeatherResponse>
         get() = _currentWeather
 
+    private val _currentForecast = MutableLiveData<List<ForecastResponse.Data>>()
+    val currentForecast: LiveData<List<ForecastResponse.Data>>
+        get() = _currentForecast
+
     fun getCurrentWeather(
         lat: Double,
         lon: Double,
@@ -27,6 +32,18 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             _currentWeather.postValue(repo.getCurrentWeather(lat, lon, apiKey, units, lang))
+        }
+    }
+
+    fun getForecastWeather(
+        lat: Double,
+        lon: Double,
+        apiKey: String = Constants.API_KEY,
+        units: String? = "standard",
+        lang: String? = "en"
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _currentForecast.postValue(repo.getForecastWeather(lat, lon, apiKey, units, lang).list)
         }
     }
 

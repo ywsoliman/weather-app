@@ -10,4 +10,12 @@ interface IRepository {
         units: String? = "standard",
         lang: String? = "en"
     ): CurrentWeatherResponse
+
+    suspend fun getForecastWeather(
+        lat: Double,
+        lon: Double,
+        apiKey: String = Constants.API_KEY,
+        units: String? = "standard",
+        lang: String? = "en"
+    ): ForecastResponse
 }

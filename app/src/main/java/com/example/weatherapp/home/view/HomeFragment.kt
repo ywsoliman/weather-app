@@ -19,6 +19,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var weatherTimeAdapter: WeatherTimeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +31,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val homeViewModelFactory = HomeViewModelFactory(
             Repository.getInstance(
                 WeatherLocalDataSource(requireContext()),
@@ -37,10 +39,19 @@ class HomeFragment : Fragment() {
             )
         )
         homeViewModel = ViewModelProvider(this, homeViewModelFactory)[HomeViewModel::class.java]
+        weatherTimeAdapter = WeatherTimeAdapter(homeViewModel)
         binding.lifecycleOwner = this
         binding.viewModel = homeViewModel
+        binding.adapter = weatherTimeAdapter
 
-        homeViewModel.getCurrentWeather(51.507351, -0.127758)
+        homeViewModel.getCurrentWeather(51.507351, -0.127758, units = "metric")
+        homeViewModel.getForecastWeather(51.507351, -0.127758, units = "metric")
+
+        homeViewModel.currentForecast.observe(viewLifecycleOwner) {
+            weatherTimeAdapter.submitList(it.subList(0, 8))
+        }
+
+//        weatherTimeAdapter.submitList()
     }
 
 
