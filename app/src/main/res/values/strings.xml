@@ -20,4 +20,21 @@
     <string name="cloud_icon">Cloud Icon</string>
     <string name="today">Today</string>
     <string name="current_weather_time_icon">Current Weather Time Icon</string>
+    <string name="location_header">Location</string>
+    <string name="map">Map</string>
+    <string name="gps">GPS</string>
+    <string name="GPS">GPS</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="celsius">Celsius</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="temperature_header">Temperature</string>
+    <string name="meter_sec">Meter / Sec</string>
+    <string name="mile_hour">Mile / Hour</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="notifications">Notifications</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
 </resources>
