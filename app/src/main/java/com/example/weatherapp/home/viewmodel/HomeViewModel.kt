@@ -23,6 +23,11 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     val currentForecast: LiveData<List<ForecastResponse.Data>>
         get() = _currentForecast
 
+    private val _currentLocation = MutableLiveData<Pair<Double, Double>>()
+    val currentLocation: LiveData<Pair<Double, Double>>
+        get() = _currentLocation
+
+
     fun getCurrentWeather(
         lat: Double,
         lon: Double,
@@ -54,6 +59,10 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
         val month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())
         return "$dayOfWeek, $dayOfMonth $month"
+    }
+
+    fun setLocationCoordinates(latitude: Double, longitude: Double) {
+        _currentLocation.postValue(Pair(latitude, longitude))
     }
 
 }

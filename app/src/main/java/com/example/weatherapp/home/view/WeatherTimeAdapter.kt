@@ -8,10 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.WeatherTimeItemBinding
-import com.example.weatherapp.home.viewmodel.HomeViewModel
 import com.example.weatherapp.models.ForecastResponse
 
-class WeatherTimeAdapter(private val homeViewModel: HomeViewModel) :
+class WeatherTimeAdapter :
     ListAdapter<ForecastResponse.Data, WeatherTimeAdapter.TimeViewHolder>(TimeDiffUtil()) {
 
     private lateinit var binding: WeatherTimeItemBinding
