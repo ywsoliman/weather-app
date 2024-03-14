@@ -19,7 +19,7 @@
     <string name="pressure_icon">Pressure Icon</string>
     <string name="cloud_icon">Cloud Icon</string>
     <string name="today">Today</string>
-    <string name="current_weather_time_icon">Current Weather Time Icon</string>
+    <string name="weather_time_icon">Current Weather Time Icon</string>
     <string name="location_header">Location</string>
     <string name="map">Map</string>
     <string name="gps">GPS</string>
@@ -37,4 +37,10 @@
     <string name="notifications">Notifications</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="we_can_t_fetch_your_location">We can\'t fetch your location.</string>
+    <string name="please_allow_application_to_access_your_location">Please allow application to access your location</string>
+    <string name="allow">Allow</string>
+    <string name="next_5_days">Next 5 Days</string>
+    <string name="minAndMaxTemp">%1$s/%2$s°</string>
+
 </resources>

@@ -1,32 +1,34 @@
 package com.example.weatherapp.home.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.CurrentWeatherResponse
 import com.example.weatherapp.models.ForecastResponse
 import com.example.weatherapp.models.Repository
+import com.example.weatherapp.util.ApiStatus
 import com.example.weatherapp.util.Constants
+import com.example.weatherapp.util.LocationStatus
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Locale
 
 class HomeViewModel(private val repo: Repository) : ViewModel() {
 
-    private val _currentWeather = MutableLiveData<CurrentWeatherResponse>()
-    val currentWeather: LiveData<CurrentWeatherResponse>
-        get() = _currentWeather
+    private val _locationStatus = MutableStateFlow<LocationStatus>(LocationStatus.Asking)
+    val locationStatus = _locationStatus.asStateFlow()
 
-    private val _currentForecast = MutableLiveData<List<ForecastResponse.Data>>()
-    val currentForecast: LiveData<List<ForecastResponse.Data>>
-        get() = _currentForecast
+    private val _apiStatus = MutableStateFlow<ApiStatus>(ApiStatus.Loading)
+    val apiStatus = _apiStatus.asStateFlow()
 
-    private val _currentLocation = MutableLiveData<Pair<Double, Double>>()
-    val currentLocation: LiveData<Pair<Double, Double>>
-        get() = _currentLocation
+    private val _currentWeather = MutableStateFlow<CurrentWeatherResponse?>(null)
+    val currentWeather = _currentWeather.asStateFlow()
 
+    private val _currentForecast = MutableStateFlow<ForecastResponse?>(null)
+    val currentForecast = _currentForecast.asStateFlow()
 
     fun getCurrentWeather(
         lat: Double,
@@ -36,7 +38,13 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         lang: String? = "en"
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            _currentWeather.postValue(repo.getCurrentWeather(lat, lon, apiKey, units, lang))
+            repo.getCurrentWeather(lat, lon, apiKey, units, lang)
+                .catch {
+                    _apiStatus.value = ApiStatus.Failure(it)
+                }.collect {
+                    _currentWeather.value = it
+                    _apiStatus.value = ApiStatus.Success
+                }
         }
     }
 
@@ -47,8 +55,14 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         units: String? = "standard",
         lang: String? = "en"
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _currentForecast.postValue(repo.getForecastWeather(lat, lon, apiKey, units, lang).list)
+        viewModelScope.launch {
+            repo.getForecastWeather(lat, lon, apiKey, units, lang)
+                .catch {
+                    _apiStatus.value = ApiStatus.Failure(it)
+                }.collect {
+                    _currentForecast.value = it
+                    _apiStatus.value = ApiStatus.Success
+                }
         }
     }
 
@@ -62,7 +76,11 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     }
 
     fun setLocationCoordinates(latitude: Double, longitude: Double) {
-        _currentLocation.postValue(Pair(latitude, longitude))
+        _locationStatus.value = LocationStatus.Granted(latitude, longitude)
+    }
+
+    fun locationDenied() {
+        _locationStatus.value = LocationStatus.Denied
     }
 
 }

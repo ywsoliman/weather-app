@@ -2,6 +2,8 @@ package com.example.weatherapp.network
 
 import com.example.weatherapp.models.CurrentWeatherResponse
 import com.example.weatherapp.models.ForecastResponse
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 object WeatherRemoteDataSource : IWeatherRemoteDataSource {
 
@@ -13,8 +15,12 @@ object WeatherRemoteDataSource : IWeatherRemoteDataSource {
         apiKey: String,
         units: String?,
         lang: String?
-    ): CurrentWeatherResponse {
-        return dao.getCurrentWeather(lat, lon, apiKey, units, lang)
+    ): Flow<CurrentWeatherResponse> {
+        return flow {
+            val response = dao.getCurrentWeather(lat, lon, apiKey, units, lang)
+            if (response.isSuccessful)
+                response.body()?.let { emit(it) }
+        }
     }
 
     override suspend fun getForecastWeather(
@@ -23,7 +29,11 @@ object WeatherRemoteDataSource : IWeatherRemoteDataSource {
         apiKey: String,
         units: String?,
         lang: String?
-    ): ForecastResponse {
-        return dao.getForecastWeather(lat, lon, apiKey, units, lang)
+    ): Flow<ForecastResponse> {
+        return flow {
+            val response = dao.getForecastWeather(lat, lon, apiKey, units, lang)
+            if (response.isSuccessful)
+                response.body()?.let { emit(it) }
+        }
     }
 }

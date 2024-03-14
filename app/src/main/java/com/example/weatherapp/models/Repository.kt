@@ -2,6 +2,7 @@ package com.example.weatherapp.models
 
 import com.example.weatherapp.db.IWeatherLocalDataSource
 import com.example.weatherapp.network.IWeatherRemoteDataSource
+import kotlinx.coroutines.flow.Flow
 
 class Repository private constructor(
     private val localDataSource: IWeatherLocalDataSource,
@@ -32,7 +33,7 @@ class Repository private constructor(
         apiKey: String,
         units: String?,
         lang: String?
-    ): CurrentWeatherResponse {
+    ): Flow<CurrentWeatherResponse> {
         return remoteDataSource.getCurrentWeather(lat, lon, apiKey, units, lang)
     }
 
@@ -42,7 +43,7 @@ class Repository private constructor(
         apiKey: String,
         units: String?,
         lang: String?
-    ): ForecastResponse {
+    ): Flow<ForecastResponse> {
         return remoteDataSource.getForecastWeather(lat, lon, apiKey, units, lang)
     }
 

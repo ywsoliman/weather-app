@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -13,23 +14,33 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.home.viewmodel.HomeViewModel
 import com.example.weatherapp.home.viewmodel.HomeViewModelFactory
+import com.example.weatherapp.models.NextDaysDTO
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
+import com.example.weatherapp.util.ApiStatus
+import com.example.weatherapp.util.LocationStatus
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 private const val TAG = "HomeFragment"
 private const val REQUEST_LOCATION_CODE = 2005
@@ -40,6 +51,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var weatherTimeAdapter: WeatherTimeAdapter
+    private lateinit var nextDaysAdapter: NextDaysWeatherAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,8 +71,11 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.allowBtn.setOnClickListener { askForLocation() }
 
         val homeViewModelFactory = HomeViewModelFactory(
             Repository.getInstance(
@@ -70,19 +85,102 @@ class HomeFragment : Fragment() {
         )
         homeViewModel = ViewModelProvider(this, homeViewModelFactory)[HomeViewModel::class.java]
         weatherTimeAdapter = WeatherTimeAdapter()
+        nextDaysAdapter = NextDaysWeatherAdapter()
         binding.lifecycleOwner = this
         binding.viewModel = homeViewModel
-        binding.adapter = weatherTimeAdapter
+        binding.currentDayAdapter = weatherTimeAdapter
+        binding.nextDaysAdapter = nextDaysAdapter
 
-        homeViewModel.currentLocation.observe(viewLifecycleOwner) {
-            homeViewModel.getCurrentWeather(it.first, it.second, units = "metric")
-            homeViewModel.getForecastWeather(it.first, it.second, units = "metric")
-        }
+        lifecycleScope.launch {
+            homeViewModel.locationStatus.collectLatest { locationStatus ->
+                when (locationStatus) {
+                    is LocationStatus.Granted -> {
+                        handleLocationGranted(locationStatus.latitude, locationStatus.longitude)
+                    }
 
-        homeViewModel.currentForecast.observe(viewLifecycleOwner) {
-            weatherTimeAdapter.submitList(it.subList(0, 8))
+                    is LocationStatus.Denied -> {
+                        binding.weatherDetails.visibility = View.GONE
+                        binding.allowLocationCard.visibility = View.VISIBLE
+                    }
+
+                    is LocationStatus.Asking -> {
+                        binding.weatherDetails.visibility = View.GONE
+                        binding.allowLocationCard.visibility = View.GONE
+                    }
+                }
+            }
         }
-        
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun handleLocationGranted(lat: Double, lon: Double) {
+        homeViewModel.getCurrentWeather(
+            lat,
+            lon,
+            units = "metric"
+        )
+        homeViewModel.getForecastWeather(
+            lat,
+            lon,
+            units = "metric"
+        )
+        lifecycleScope.launch {
+            homeViewModel.currentForecast.collect { response ->
+                response?.let {
+
+                    var currentDate = LocalDate.now()
+                    val currentDateString =
+                        currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                    val groupByDate = it.list.groupBy {
+                        it.dt_txt.substringBefore(" ")
+                    }.toMutableMap()
+
+                    weatherTimeAdapter.submitList(groupByDate[currentDateString])
+                    groupByDate.remove(currentDateString)
+
+                    val nextDays = mutableListOf<NextDaysDTO>()
+                    groupByDate.forEach { (date, items) ->
+
+                        val randomTimeAtDay = (0..items.lastIndex).random()
+                        currentDate = currentDate.plusDays(1)
+                        nextDays.add(
+                            NextDaysDTO(
+                                date,
+                                items[randomTimeAtDay].weather[0].icon,
+                                items[randomTimeAtDay].weather[0].description,
+                                items[randomTimeAtDay].main.temp_min,
+                                items[randomTimeAtDay].main.temp_max
+                            )
+                        )
+                    }
+                    nextDaysAdapter.submitList(nextDays)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            homeViewModel.apiStatus.collectLatest { apiStatus ->
+                when (apiStatus) {
+                    is ApiStatus.Success -> {
+                        binding.allowLocationCard.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
+                        binding.weatherDetails.visibility = View.VISIBLE
+                    }
+
+                    is ApiStatus.Failure -> {
+                        Snackbar.make(
+                            requireView(),
+                            "There is a problem with the server. Couldn't fetch the weather.",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+
+                    is ApiStatus.Loading -> {
+                        binding.weatherDetails.visibility = View.GONE
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
     }
 
     private fun checkPermissions(): Boolean {
@@ -112,8 +210,9 @@ class HomeFragment : Fragment() {
                     val latitude = locationResult.lastLocation?.latitude
                     if (latitude != null && longitude != null) {
                         homeViewModel.setLocationCoordinates(latitude, longitude)
+                        Log.i(TAG, "onLocationResult: latitude = $latitude, longitude = $longitude")
                     }
-                    Log.i(TAG, "onLocationResult: ")
+                    fusedClient.removeLocationUpdates(this)
                 }
             },
             Looper.myLooper()
@@ -144,6 +243,8 @@ class HomeFragment : Fragment() {
             Log.i(TAG, "onRequestPermissionsResult: grantResults = $grantResults")
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 getFreshLocation()
+            else
+                homeViewModel.locationDenied()
         }
     }
 

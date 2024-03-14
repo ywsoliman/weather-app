@@ -1,6 +1,7 @@
 package com.example.weatherapp.models
 
 import com.example.weatherapp.util.Constants
+import kotlinx.coroutines.flow.Flow
 
 interface IRepository {
     suspend fun getCurrentWeather(
@@ -9,7 +10,7 @@ interface IRepository {
         apiKey: String = Constants.API_KEY,
         units: String? = "standard",
         lang: String? = "en"
-    ): CurrentWeatherResponse
+    ): Flow<CurrentWeatherResponse>
 
     suspend fun getForecastWeather(
         lat: Double,
@@ -17,5 +18,5 @@ interface IRepository {
         apiKey: String = Constants.API_KEY,
         units: String? = "standard",
         lang: String? = "en"
-    ): ForecastResponse
+    ): Flow<ForecastResponse>
 }

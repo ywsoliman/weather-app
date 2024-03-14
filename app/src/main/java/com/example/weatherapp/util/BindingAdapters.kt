@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -27,5 +28,13 @@ fun formatTimeToAmPm(textView: TextView, time: String) {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     val dateTime = LocalDateTime.parse(time, formatter)
     textView.text = dateTime.format(DateTimeFormatter.ofPattern("h a"))
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@BindingAdapter("getDay")
+fun convertDateToDay(textView: TextView, time: String) {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val date = LocalDate.parse(time, formatter)
+    textView.text = date.dayOfWeek.toString().substring(0, 3)
 }
 

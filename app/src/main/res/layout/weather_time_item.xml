@@ -29,6 +29,7 @@
                 android:id="@+id/timeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/transparent_white"
                 app:getTime="@{currentTime.dt_txt}"
                 tools:text="2 AM" />
 
@@ -38,7 +39,7 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:contentDescription="@string/current_weather_time_icon"
+                android:contentDescription="@string/weather_time_icon"
                 app:url="@{currentTime.weather[0].icon}"
                 tools:src="@tools:sample/avatars" />
 
@@ -47,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{@string/temperature(String.valueOf(Math.round(currentTime.main.temp)))}"
+                android:textSize="18sp"
                 tools:text="13°" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
