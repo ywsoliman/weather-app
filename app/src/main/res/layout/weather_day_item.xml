@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="response"
-            type="com.example.weatherapp.models.NextDaysDTO" />
+            name="currentDay"
+            type="com.example.weatherapp.models.ForecastResponse.Data" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -27,7 +27,7 @@
                 android:id="@+id/nextDaysText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:getDay="@{response.time}"
+                app:getDay="@{currentDay.dt_txt}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/nextDaysImage"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -45,14 +45,14 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/nextDaysText"
                 app:layout_constraintTop_toTopOf="parent"
-                app:url="@{response.icon}"
+                app:url="@{currentDay.weather[0].icon}"
                 tools:src="@tools:sample/avatars" />
 
             <TextView
                 android:id="@+id/nextDaysDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{response.description}"
+                android:text="@{currentDay.weather[0].description}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/nextDaysTempText"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -64,7 +64,7 @@
                 android:id="@+id/nextDaysTempText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@string/minAndMaxTemp(String.valueOf(Math.round(response.minTemp)), String.valueOf(Math.round(response.minTemp)))}"
+                android:text="@{@string/minAndMaxTemp(String.valueOf(Math.round(currentDay.main.temp_max)), String.valueOf(Math.round(currentDay.main.temp_min)))}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

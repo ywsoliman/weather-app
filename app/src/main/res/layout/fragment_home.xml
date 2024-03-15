@@ -10,12 +10,13 @@
             type="com.example.weatherapp.home.viewmodel.HomeViewModel" />
 
         <variable
-            name="currentDayAdapter"
+            name="todayAdapter"
             type="com.example.weatherapp.home.view.WeatherTimeAdapter" />
 
         <variable
             name="nextDaysAdapter"
             type="com.example.weatherapp.home.view.NextDaysWeatherAdapter" />
+
 
     </data>
 
@@ -347,7 +348,7 @@
                     android:id="@+id/rvCurrentTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:adapter="@{currentDayAdapter}"
+                    android:adapter="@{todayAdapter}"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/weather_time_item" />

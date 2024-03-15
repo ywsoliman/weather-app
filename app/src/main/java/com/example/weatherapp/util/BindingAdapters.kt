@@ -33,7 +33,7 @@ fun formatTimeToAmPm(textView: TextView, time: String) {
 @RequiresApi(Build.VERSION_CODES.O)
 @BindingAdapter("getDay")
 fun convertDateToDay(textView: TextView, time: String) {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     val date = LocalDate.parse(time, formatter)
     textView.text = date.dayOfWeek.toString().substring(0, 3)
 }

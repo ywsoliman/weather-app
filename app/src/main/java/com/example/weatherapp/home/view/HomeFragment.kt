@@ -25,7 +25,6 @@ import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.home.viewmodel.HomeViewModel
 import com.example.weatherapp.home.viewmodel.HomeViewModelFactory
-import com.example.weatherapp.models.NextDaysDTO
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.ApiStatus
@@ -39,8 +38,6 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 private const val TAG = "HomeFragment"
 private const val REQUEST_LOCATION_CODE = 2005
@@ -50,8 +47,8 @@ class HomeFragment : Fragment() {
     private lateinit var fusedClient: FusedLocationProviderClient
     private lateinit var binding: FragmentHomeBinding
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var weatherTimeAdapter: WeatherTimeAdapter
-    private lateinit var nextDaysAdapter: NextDaysWeatherAdapter
+    private lateinit var todayForecastAdapter: WeatherTimeAdapter
+    private lateinit var nextDaysForecastAdapter: NextDaysWeatherAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,12 +81,12 @@ class HomeFragment : Fragment() {
             )
         )
         homeViewModel = ViewModelProvider(this, homeViewModelFactory)[HomeViewModel::class.java]
-        weatherTimeAdapter = WeatherTimeAdapter()
-        nextDaysAdapter = NextDaysWeatherAdapter()
-        binding.lifecycleOwner = this
+        todayForecastAdapter = WeatherTimeAdapter()
+        nextDaysForecastAdapter = NextDaysWeatherAdapter()
         binding.viewModel = homeViewModel
-        binding.currentDayAdapter = weatherTimeAdapter
-        binding.nextDaysAdapter = nextDaysAdapter
+        binding.todayAdapter = todayForecastAdapter
+        binding.nextDaysAdapter = nextDaysForecastAdapter
+        binding.lifecycleOwner = this
 
         lifecycleScope.launch {
             homeViewModel.locationStatus.collectLatest { locationStatus ->
@@ -110,6 +107,16 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+        lifecycleScope.launch {
+            homeViewModel.todayForecast.collect {
+                todayForecastAdapter.submitList(it)
+            }
+        }
+        lifecycleScope.launch {
+            homeViewModel.nextDaysForecast.collect {
+                nextDaysForecastAdapter.submitList(it)
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -124,39 +131,6 @@ class HomeFragment : Fragment() {
             lon,
             units = "metric"
         )
-        lifecycleScope.launch {
-            homeViewModel.currentForecast.collect { response ->
-                response?.let {
-
-                    var currentDate = LocalDate.now()
-                    val currentDateString =
-                        currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                    val groupByDate = it.list.groupBy {
-                        it.dt_txt.substringBefore(" ")
-                    }.toMutableMap()
-
-                    weatherTimeAdapter.submitList(groupByDate[currentDateString])
-                    groupByDate.remove(currentDateString)
-
-                    val nextDays = mutableListOf<NextDaysDTO>()
-                    groupByDate.forEach { (date, items) ->
-
-                        val randomTimeAtDay = (0..items.lastIndex).random()
-                        currentDate = currentDate.plusDays(1)
-                        nextDays.add(
-                            NextDaysDTO(
-                                date,
-                                items[randomTimeAtDay].weather[0].icon,
-                                items[randomTimeAtDay].weather[0].description,
-                                items[randomTimeAtDay].main.temp_min,
-                                items[randomTimeAtDay].main.temp_max
-                            )
-                        )
-                    }
-                    nextDaysAdapter.submitList(nextDays)
-                }
-            }
-        }
         lifecycleScope.launch {
             homeViewModel.apiStatus.collectLatest { apiStatus ->
                 when (apiStatus) {
@@ -181,6 +155,20 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun enableLocationService() {
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        startActivity(intent)
+    }
+
+    private fun askForLocation() {
+        requestPermissions(
+            arrayOf(
+                ACCESS_COARSE_LOCATION,
+            ),
+            REQUEST_LOCATION_CODE
+        )
     }
 
     private fun checkPermissions(): Boolean {
@@ -219,20 +207,6 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private fun enableLocationService() {
-        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        startActivity(intent)
-    }
-
-    private fun askForLocation() {
-        requestPermissions(
-            arrayOf(
-                ACCESS_COARSE_LOCATION,
-            ),
-            REQUEST_LOCATION_CODE
-        )
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -241,9 +215,10 @@ class HomeFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION_CODE) {
             Log.i(TAG, "onRequestPermissionsResult: grantResults = $grantResults")
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getFreshLocation()
-            else
+//                homeViewModel.getFreshLocation()
+            } else
                 homeViewModel.locationDenied()
         }
     }
