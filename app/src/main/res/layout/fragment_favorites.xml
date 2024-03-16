@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".favorite.FavoritesFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="FAVORITES" />
+        android:padding="16dp"
+        tools:context=".favorite.FavoritesFragment">
 
-</FrameLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFavPlaces"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/favoriteFAB"
+            android:layout_marginBottom="16dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/favoriteFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:clickable="true"
+            android:contentDescription="@string/add_place_to_favorites"
+            android:focusable="true"
+            android:src="@android:drawable/ic_input_add" />
+    </RelativeLayout>
+</layout>

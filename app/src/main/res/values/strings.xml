@@ -42,5 +42,7 @@
     <string name="imperial">Imperial</string>
     <string name="metric">Metric</string>
     <string name="standard">Standard</string>
+    <string name="add_place_to_favorites">Add Place to Favorites</string>
+    <string name="save">Save</string>
 
 </resources>
