@@ -15,8 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 import kotlin.random.Random
@@ -86,9 +84,7 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     private fun getTodayForecast(response: List<ForecastResponse.Data>) {
         viewModelScope.launch {
             response.apply {
-                val currentDate = LocalDate.now()
-                val currentDateString =
-                    currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val currentDateString = response[0].dt_txt
                 val groupByDate = this.filter {
                     currentDateString == it.dt_txt.substringBefore(" ")
                 }
@@ -100,9 +96,7 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     private fun getNextDaysForecast(response: List<ForecastResponse.Data>) {
         viewModelScope.launch {
             response.apply {
-                val currentDate = LocalDate.now()
-                val currentDateString =
-                    currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val currentDateString = response[0].dt_txt
                 val restOfDays = this
                     .filter {
                         currentDateString != it.dt_txt.substringBefore(" ")
