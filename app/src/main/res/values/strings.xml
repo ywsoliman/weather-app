@@ -27,10 +27,6 @@
     <string name="language">Language</string>
     <string name="english">English</string>
     <string name="arabic">Arabic</string>
-    <string name="celsius">Celsius</string>
-    <string name="kelvin">Kelvin</string>
-    <string name="fahrenheit">Fahrenheit</string>
-    <string name="temperature_header">Temperature</string>
     <string name="meter_sec">Meter / Sec</string>
     <string name="mile_hour">Mile / Hour</string>
     <string name="wind_speed">Wind Speed</string>
@@ -42,5 +38,9 @@
     <string name="allow">Allow</string>
     <string name="next_5_days">Next 5 Days</string>
     <string name="minAndMaxTemp">%1$s/%2$s°</string>
+    <string name="units_of_measurements">Units of Measurements</string>
+    <string name="imperial">Imperial</string>
+    <string name="metric">Metric</string>
+    <string name="standard">Standard</string>
 
 </resources>

@@ -72,7 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/temperature_header" />
+        android:text="@string/units_of_measurements" />
 
     <com.google.android.material.chip.ChipGroup
         android:layout_width="match_parent"
@@ -80,26 +80,26 @@
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/celsiusChip"
+            android:id="@+id/standardChip"
+            style="@style/ChipStyle"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/standard" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/metricChip"
             style="@style/ChipStyle"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/celsius" />
+            android:text="@string/metric" />
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/kelvinChip"
+            android:id="@+id/imperialChip"
             style="@style/ChipStyle"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="@string/kelvin" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/fahrenheitChip"
-            style="@style/ChipStyle"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="@string/fahrenheit" />
+            android:text="@string/imperial" />
     </com.google.android.material.chip.ChipGroup>
 
     <TextView

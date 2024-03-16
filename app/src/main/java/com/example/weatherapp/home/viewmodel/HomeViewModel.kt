@@ -21,6 +21,7 @@ import java.util.Calendar
 import java.util.Locale
 import kotlin.random.Random
 
+@RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(private val repo: Repository) : ViewModel() {
 
     private val _locationStatus = MutableStateFlow<LocationStatus>(LocationStatus.Asking)
@@ -38,11 +39,18 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     private val _nextDaysForecast = MutableStateFlow<List<ForecastResponse.Data>?>(null)
     val nextDaysForecast = _nextDaysForecast.asStateFlow()
 
-    fun getCurrentWeather(
+    private val _coord = MutableStateFlow(Pair(0.0, 0.0))
+
+    private val _langPreference = MutableStateFlow("en")
+    val langPreferences = _langPreference.asStateFlow()
+
+    private val _units = MutableStateFlow("metric")
+
+    private fun getCurrentWeather(
         lat: Double,
         lon: Double,
         apiKey: String = Constants.API_KEY,
-        units: String? = "standard",
+        units: String? = "metric",
         lang: String? = "en"
     ) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -56,8 +64,26 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getTodayForecast(response: List<ForecastResponse.Data>) {
+    private fun getForecastWeather(
+        lat: Double,
+        lon: Double,
+        apiKey: String = Constants.API_KEY,
+        units: String? = "standard",
+        lang: String? = "en"
+    ) {
+        viewModelScope.launch {
+            repo.getForecastWeather(lat, lon, apiKey, units, lang)
+                .catch {
+                    _apiStatus.value = ApiStatus.Failure(it)
+                }.collect {
+                    getTodayForecast(it.list)
+                    getNextDaysForecast(it.list)
+                    _apiStatus.value = ApiStatus.Success
+                }
+        }
+    }
+
+    private fun getTodayForecast(response: List<ForecastResponse.Data>) {
         viewModelScope.launch {
             response.apply {
                 val currentDate = LocalDate.now()
@@ -71,8 +97,7 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getNextDaysForecast(response: List<ForecastResponse.Data>) {
+    private fun getNextDaysForecast(response: List<ForecastResponse.Data>) {
         viewModelScope.launch {
             response.apply {
                 val currentDate = LocalDate.now()
@@ -98,24 +123,19 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getForecastWeather(
-        lat: Double,
-        lon: Double,
-        apiKey: String = Constants.API_KEY,
-        units: String? = "standard",
-        lang: String? = "en"
-    ) {
-        viewModelScope.launch {
-            repo.getForecastWeather(lat, lon, apiKey, units, lang)
-                .catch {
-                    _apiStatus.value = ApiStatus.Failure(it)
-                }.collect {
-                    getTodayForecast(it.list)
-                    getNextDaysForecast(it.list)
-                    _apiStatus.value = ApiStatus.Success
-                }
-        }
+    private fun getWeather() {
+        getCurrentWeather(
+            _coord.value.first,
+            _coord.value.second,
+            lang = _langPreference.value,
+            units = _units.value
+        )
+        getForecastWeather(
+            _coord.value.first,
+            _coord.value.second,
+            lang = _langPreference.value,
+            units = _units.value
+        )
     }
 
     fun getCurrentDateFormatted(): String {
@@ -127,47 +147,20 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         return "$dayOfWeek, $dayOfMonth $month"
     }
 
+    fun locationGranted() {
+        _locationStatus.value = LocationStatus.Granted
+    }
+
     fun setLocationCoordinates(latitude: Double, longitude: Double) {
-        _locationStatus.value = LocationStatus.Granted(latitude, longitude)
+        _coord.value = Pair(latitude, longitude)
+        getWeather()
     }
 
     fun locationDenied() {
         _locationStatus.value = LocationStatus.Denied
     }
 
-//    private fun checkPermissions(): Boolean {
-//        return ContextCompat.checkSelfPermission(
-//            appContext,
-//            Manifest.permission.ACCESS_COARSE_LOCATION
-//        ) == PackageManager.PERMISSION_GRANTED
-//    }
-//
-//    private fun isLocationEnabled(): Boolean {
-//        val locationManager =
-//            appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-//                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-//    }
-
-//    @SuppressLint("MissingPermission")
-//    fun getFreshLocation() {
-//        fusedClient.requestLocationUpdates(
-//            LocationRequest.Builder(1000).apply {
-//                setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-//            }.build(),
-//            object : LocationCallback() {
-//                override fun onLocationResult(locationResult: LocationResult) {
-//                    super.onLocationResult(locationResult)
-//                    val longitude = locationResult.lastLocation?.longitude
-//                    val latitude = locationResult.lastLocation?.latitude
-//                    if (latitude != null && longitude != null) {
-//                        setLocationCoordinates(latitude, longitude)
-//                    }
-//                    fusedClient.removeLocationUpdates(this)
-//                }
-//            },
-//            Looper.myLooper()
-//        )
-//    }
-
+    fun setUnits(units: String) {
+        _units.value = units
+    }
 }

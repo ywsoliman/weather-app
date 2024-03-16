@@ -1,5 +1,5 @@
 package com.example.weatherapp.util
 
 object Constants {
-    const val API_KEY = "bb8e78f50b26248e6cba94dcf39319a3"
+    const val API_KEY = "772fa8bd6198928ac03830e013dffeef"
 }

@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
@@ -39,16 +38,23 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-private const val TAG = "HomeFragment"
 private const val REQUEST_LOCATION_CODE = 2005
 
+@RequiresApi(Build.VERSION_CODES.O)
 class HomeFragment : Fragment() {
 
     private lateinit var fusedClient: FusedLocationProviderClient
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var homeViewModel: HomeViewModel
     private lateinit var todayForecastAdapter: WeatherTimeAdapter
     private lateinit var nextDaysForecastAdapter: NextDaysWeatherAdapter
+    private val homeViewModel: HomeViewModel by activityViewModels {
+        HomeViewModelFactory(
+            Repository.getInstance(
+                WeatherLocalDataSource.getInstance(requireContext()),
+                WeatherRemoteDataSource
+            )
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,14 +79,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.allowBtn.setOnClickListener { askForLocation() }
-
-        val homeViewModelFactory = HomeViewModelFactory(
-            Repository.getInstance(
-                WeatherLocalDataSource(requireContext()),
-                WeatherRemoteDataSource
-            )
-        )
-        homeViewModel = ViewModelProvider(this, homeViewModelFactory)[HomeViewModel::class.java]
         todayForecastAdapter = WeatherTimeAdapter()
         nextDaysForecastAdapter = NextDaysWeatherAdapter()
         binding.viewModel = homeViewModel
@@ -92,7 +90,7 @@ class HomeFragment : Fragment() {
             homeViewModel.locationStatus.collectLatest { locationStatus ->
                 when (locationStatus) {
                     is LocationStatus.Granted -> {
-                        handleLocationGranted(locationStatus.latitude, locationStatus.longitude)
+                        handleLocationGranted()
                     }
 
                     is LocationStatus.Denied -> {
@@ -108,29 +106,19 @@ class HomeFragment : Fragment() {
             }
         }
         lifecycleScope.launch {
-            homeViewModel.todayForecast.collect {
+            homeViewModel.todayForecast.collectLatest {
                 todayForecastAdapter.submitList(it)
             }
         }
         lifecycleScope.launch {
-            homeViewModel.nextDaysForecast.collect {
+            homeViewModel.nextDaysForecast.collectLatest {
                 nextDaysForecastAdapter.submitList(it)
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun handleLocationGranted(lat: Double, lon: Double) {
-        homeViewModel.getCurrentWeather(
-            lat,
-            lon,
-            units = "metric"
-        )
-        homeViewModel.getForecastWeather(
-            lat,
-            lon,
-            units = "metric"
-        )
+    private fun handleLocationGranted() {
         lifecycleScope.launch {
             homeViewModel.apiStatus.collectLatest { apiStatus ->
                 when (apiStatus) {
@@ -198,7 +186,6 @@ class HomeFragment : Fragment() {
                     val latitude = locationResult.lastLocation?.latitude
                     if (latitude != null && longitude != null) {
                         homeViewModel.setLocationCoordinates(latitude, longitude)
-                        Log.i(TAG, "onLocationResult: latitude = $latitude, longitude = $longitude")
                     }
                     fusedClient.removeLocationUpdates(this)
                 }
@@ -214,14 +201,12 @@ class HomeFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION_CODE) {
-            Log.i(TAG, "onRequestPermissionsResult: grantResults = $grantResults")
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                homeViewModel.locationGranted()
                 getFreshLocation()
-//                homeViewModel.getFreshLocation()
             } else
                 homeViewModel.locationDenied()
         }
     }
-
 
 }
