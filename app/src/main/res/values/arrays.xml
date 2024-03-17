@@ -1,0 +1,34 @@
+<resources>
+    <string-array name="location_entries">
+        <item>Map</item>
+        <item>GPS</item>
+    </string-array>
+
+    <string-array name="location_values">
+        <item>map</item>
+        <item>gps</item>
+    </string-array>
+
+    <string-array name="language_entries">
+        <item>English</item>
+        <item>Arabic</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>en</item>
+        <item>ar</item>
+    </string-array>
+
+    <string-array name="units_entries">
+        <item>Standard</item>
+        <item>Metric</item>
+        <item>Imperial</item>
+    </string-array>
+
+    <string-array name="units_values">
+        <item>standard</item>
+        <item>metric</item>
+        <item>imperial</item>
+    </string-array>
+
+</resources>

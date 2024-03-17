@@ -49,5 +49,11 @@
     <string name="selected_place_will_be_permanently_removed_from_favorites">Selected place will be permanently removed from favorites.</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
+    <string name="notifications_summary_on">You will no longer receive notifications</string>
+    <string name="notifications_summary_off">You will receive all notifications</string>
+    <string name="application_language">Application language</string>
+    <string name="disable_notifications">Disable notifications</string>
+    <string name="get_location_from">Get location from</string>
+    <string name="get_units_in">Get units in</string>
 
 </resources>
