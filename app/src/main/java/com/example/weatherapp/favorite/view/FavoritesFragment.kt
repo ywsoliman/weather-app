@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
@@ -44,20 +47,24 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
-        binding.adapter = FavoritesAdapter {
+        binding.adapter = FavoritesAdapter(requireContext(), {
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToHomeFragment(it)
+            findNavController().navigate(action)
+        }, {
             handleDeletePlaceButton(it)
-        }
+        })
 
         binding.favoriteFAB.setOnClickListener {
             it.findNavController().navigate(R.id.action_favoritesFragment_to_mapFragment)
         }
 
         lifecycleScope.launch {
-            favoriteViewModel.favoritePlaces.collectLatest {
-                binding.adapter?.submitList(it)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                favoriteViewModel.favoritePlaces.collectLatest {
+                    binding.adapter?.submitList(it)
+                }
             }
+
         }
     }
 

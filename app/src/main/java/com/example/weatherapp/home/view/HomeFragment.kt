@@ -19,7 +19,11 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.navArgs
+import androidx.preference.PreferenceManager
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
@@ -65,21 +69,26 @@ class HomeFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        if (checkPermissions()) {
-            if (isLocationEnabled())
-                getFreshLocation()
-            else
-                enableLocationService()
-        } else
-            askForLocation()
-
         return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadSettings()
+
+        val args: HomeFragmentArgs by navArgs()
+        val selectedFavoritePlace = args.favoritePlace
+
+        if (selectedFavoritePlace != null) {
+            homeViewModel.setLocationCoordinates(
+                selectedFavoritePlace.lat,
+                selectedFavoritePlace.lon
+            )
+        } else {
+            handleLocation()
+        }
 
         binding.allowBtn.setOnClickListener { askForLocation() }
         todayForecastAdapter = WeatherTimeAdapter()
@@ -91,36 +100,52 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch {
             homeViewModel.locationStatus.collectLatest { locationStatus ->
-                when (locationStatus) {
-                    is LocationStatus.Granted -> {
-                        handleLocationGranted()
-                        Log.i(TAG, "locationStatus: $locationStatus")
-                    }
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    when (locationStatus) {
+                        is LocationStatus.Granted -> {
+                            handleLocationGranted()
+                            Log.i(TAG, "locationStatus: $locationStatus")
+                        }
 
-                    is LocationStatus.Denied -> {
-                        binding.weatherDetails.visibility = View.GONE
-                        binding.allowLocationCard.visibility = View.VISIBLE
-                        Log.i(TAG, "locationStatus: $locationStatus")
-                    }
+                        is LocationStatus.Denied -> {
+                            binding.weatherDetails.visibility = View.GONE
+                            binding.allowLocationCard.visibility = View.VISIBLE
+                            Log.i(TAG, "locationStatus: $locationStatus")
+                        }
 
-                    is LocationStatus.Asking -> {
-                        binding.weatherDetails.visibility = View.GONE
-                        binding.allowLocationCard.visibility = View.GONE
-                        Log.i(TAG, "locationStatus: $locationStatus")
+                        is LocationStatus.Asking -> {
+                            binding.weatherDetails.visibility = View.GONE
+                            binding.allowLocationCard.visibility = View.GONE
+                            Log.i(TAG, "locationStatus: $locationStatus")
+                        }
                     }
                 }
             }
         }
         lifecycleScope.launch {
-            homeViewModel.todayForecast.collectLatest {
-                todayForecastAdapter.submitList(it)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.todayForecast.collectLatest {
+                    todayForecastAdapter.submitList(it)
+                }
             }
         }
         lifecycleScope.launch {
-            homeViewModel.nextDaysForecast.collectLatest {
-                nextDaysForecastAdapter.submitList(it)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.nextDaysForecast.collectLatest {
+                    nextDaysForecastAdapter.submitList(it)
+                }
             }
         }
+    }
+
+    private fun handleLocation() {
+        if (checkPermissions()) {
+            if (isLocationEnabled())
+                getFreshLocation()
+            else
+                enableLocationService()
+        } else
+            askForLocation()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -154,6 +179,11 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun loadSettings() {
+        val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        homeViewModel.setSharedPreferences(sp)
     }
 
     private fun enableLocationService() {
@@ -214,10 +244,12 @@ class HomeFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                getFreshLocation()
-            else
-                homeViewModel.locationDenied()
+            if (grantResults.isNotEmpty()) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    getFreshLocation()
+                else
+                    homeViewModel.locationDenied()
+            }
         }
     }
 
