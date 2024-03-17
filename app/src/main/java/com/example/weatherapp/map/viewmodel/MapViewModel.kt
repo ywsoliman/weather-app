@@ -15,7 +15,8 @@ class MapViewModel(private val repo: IRepository) : ViewModel() {
         viewModelScope.launch {
             repo.getGeocoding(latLng.latitude, latLng.longitude)
                 .collectLatest {
-                    repo.addPlaceToFavorites(it[0])
+                    if (it.isNotEmpty())
+                        repo.addPlaceToFavorites(it[0])
                 }
         }
     }
