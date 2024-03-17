@@ -13,8 +13,10 @@ import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.favorite.viewmodel.FavoriteViewModel
+import com.example.weatherapp.models.GeocodingResponseItem
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -42,7 +44,11 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.adapter = FavoritesAdapter()
+
+
+        binding.adapter = FavoritesAdapter {
+            handleDeletePlaceButton(it)
+        }
 
         binding.favoriteFAB.setOnClickListener {
             it.findNavController().navigate(R.id.action_favoritesFragment_to_mapFragment)
@@ -53,6 +59,19 @@ class FavoritesFragment : Fragment() {
                 binding.adapter?.submitList(it)
             }
         }
+    }
+
+    private fun handleDeletePlaceButton(it: GeocodingResponseItem) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.delete_selected_place))
+            .setMessage(getString(R.string.selected_place_will_be_permanently_removed_from_favorites))
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                favoriteViewModel.deleteFromFavorites(it)
+            }
+            .show()
     }
 
 }

@@ -28,4 +28,5 @@ interface IRepository {
 
     suspend fun addPlaceToFavorites(place: GeocodingResponseItem)
     suspend fun getFavoritePlaces(): Flow<List<GeocodingResponseItem>>
+    suspend fun deleteFromFavorites(place: GeocodingResponseItem)
 }

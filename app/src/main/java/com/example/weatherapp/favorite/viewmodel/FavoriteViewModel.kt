@@ -27,4 +27,10 @@ class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
         }
     }
 
+    fun deleteFromFavorites(place: GeocodingResponseItem) {
+        viewModelScope.launch {
+            repo.deleteFromFavorites(place)
+        }
+    }
+
 }

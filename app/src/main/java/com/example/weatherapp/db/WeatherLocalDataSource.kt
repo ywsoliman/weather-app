@@ -33,4 +33,8 @@ class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
         return dao.getFavoritePlaces()
     }
 
+    override suspend fun deleteFromFavorites(place: GeocodingResponseItem) {
+        dao.delete(place)
+    }
+
 }

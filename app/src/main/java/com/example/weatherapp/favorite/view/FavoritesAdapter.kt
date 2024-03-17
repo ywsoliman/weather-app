@@ -3,6 +3,7 @@ package com.example.weatherapp.favorite.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.models.GeocodingResponseItem
 
-class FavoritesAdapter :
+class FavoritesAdapter(private val listener: (GeocodingResponseItem) -> Unit) :
     ListAdapter<GeocodingResponseItem, FavoritesAdapter.FavoritesViewHolder>(FavoritesDiffUtil()) {
 
     override fun onCreateViewHolder(
@@ -28,7 +29,14 @@ class FavoritesAdapter :
         holder.placeName.text = placeString
     }
 
-    class FavoritesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class FavoritesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        init {
+            itemView.findViewById<ImageButton>(R.id.deleteBtn).setOnClickListener {
+                listener(getItem(adapterPosition))
+            }
+        }
+
         val placeName: TextView = itemView.findViewById(R.id.placeNameText)
     }
 

@@ -63,5 +63,9 @@ class Repository private constructor(
         return localDataSource.getFavoritePlaces()
     }
 
+    override suspend fun deleteFromFavorites(place: GeocodingResponseItem) {
+        localDataSource.deleteFromFavorites(place)
+    }
+
 
 }
