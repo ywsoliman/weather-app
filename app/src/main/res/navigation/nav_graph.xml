@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_alerts" />
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.weatherapp.favorite.FavoritesFragment"
+        android:name="com.example.weatherapp.favorite.view.FavoritesFragment"
         android:label="Favorites"
         tools:layout="@layout/fragment_favorites" >
         <action
@@ -31,7 +31,11 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.weatherapp.map.MapFragment"
+        android:name="com.example.weatherapp.map.view.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
+    </fragment>
 </navigation>

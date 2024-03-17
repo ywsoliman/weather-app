@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
+        <variable
+            name="adapter"
+            type="com.example.weatherapp.favorite.view.FavoritesAdapter" />
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
-        tools:context=".favorite.FavoritesFragment">
+        tools:context=".favorite.view.FavoritesFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvFavPlaces"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/favoriteFAB"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:adapter="@{adapter}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/favoriteFAB"

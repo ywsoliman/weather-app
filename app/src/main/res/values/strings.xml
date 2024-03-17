@@ -44,5 +44,6 @@
     <string name="standard">Standard</string>
     <string name="add_place_to_favorites">Add Place to Favorites</string>
     <string name="save">Save</string>
+    <string name="remove_favorite_place_button">Remove favorite place button</string>
 
 </resources>

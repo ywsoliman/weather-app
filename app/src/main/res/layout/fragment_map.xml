@@ -1,29 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".map.MapFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.cardview.widget.CardView
+    <data>
+
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="30dp">
+        android:layout_height="match_parent"
+        tools:context=".map.view.MapFragment">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="30dp">
+
+            <fragment
+                android:id="@+id/autoCompleteFragment"
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.cardview.widget.CardView>
 
         <fragment
-            android:id="@+id/autoCompleteFragment"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            android:id="@+id/googleMapsFragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </androidx.cardview.widget.CardView>
+        <LinearLayout
+            android:id="@+id/savePlaceLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="?colorSurfaceContainerHigh"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
 
-    <fragment
-        android:id="@+id/googleMapsFragment"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
-</FrameLayout>
+            <TextView
+                android:id="@+id/placeNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/placeAddressText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="TextView" />
+
+            <Button
+                android:id="@+id/saveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/save" />
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>

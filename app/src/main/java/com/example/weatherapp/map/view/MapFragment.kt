@@ -1,12 +1,21 @@
-package com.example.weatherapp.map
+package com.example.weatherapp.map.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import com.example.weatherapp.R
+import com.example.weatherapp.databinding.FragmentMapBinding
+import com.example.weatherapp.db.WeatherLocalDataSource
+import com.example.weatherapp.map.viewmodel.MapViewModel
+import com.example.weatherapp.map.viewmodel.MapViewModelFactory
+import com.example.weatherapp.models.Repository
+import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.Constants
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,28 +29,42 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 
-private const val TAG = "MapFragment"
-
 class MapFragment : Fragment(), OnMapReadyCallback {
 
+    private lateinit var binding: FragmentMapBinding
     private lateinit var googleMap: GoogleMap
     private lateinit var autoCompleteFragment: AutocompleteSupportFragment
+    private var coordinates: LatLng? = null
+    private val mapViewModel: MapViewModel by viewModels {
+        MapViewModelFactory(
+            Repository.getInstance(
+                WeatherLocalDataSource.getInstance(requireContext()),
+                WeatherRemoteDataSource
+            )
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map, container, false)
+    ): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.saveBtn.setOnClickListener {
+            coordinates?.let {
+                mapViewModel.addPlaceToFavorites(it)
+                view.findNavController().navigate(R.id.action_mapFragment_to_favoritesFragment)
+            }
+        }
+
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.googleMapsFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-
 
         Places.initialize(requireActivity().applicationContext, Constants.GOOGLE_MAPS_KEY)
         autoCompleteFragment = childFragmentManager.findFragmentById(R.id.autoCompleteFragment)
@@ -49,6 +72,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         autoCompleteFragment.setPlaceFields(
             listOf(
                 Place.Field.NAME,
+                Place.Field.ADDRESS,
                 Place.Field.LAT_LNG
             )
         )
@@ -64,11 +88,18 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
             override fun onPlaceSelected(place: Place) {
                 val name = place.name
+                val address = place.address
                 val latLng = place.latLng
                 latLng?.let {
+                    coordinates = latLng
                     zoomOnMap(it)
                     addMaker(it)
+                    binding.savePlaceLayout.visibility = View.VISIBLE
+                    binding.placeNameText.visibility = View.VISIBLE
+                    binding.placeNameText.text = name
+                    binding.placeAddressText.text = address
                 }
+
             }
 
         })
@@ -81,6 +112,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             MarkerOptions()
                 .position(latLng)
         )
+
     }
 
     private fun zoomOnMap(latLng: LatLng) {
@@ -92,6 +124,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         googleMap.setOnMapClickListener {
             addMaker(it)
+            coordinates = it
+            binding.savePlaceLayout.visibility = View.VISIBLE
+            binding.placeNameText.visibility = View.GONE
+            val coordString = "Latitude: ${it.latitude}\nLongitude: ${it.longitude}"
+            binding.placeAddressText.text = coordString
         }
 
     }
