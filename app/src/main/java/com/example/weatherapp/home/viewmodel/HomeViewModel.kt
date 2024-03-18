@@ -1,5 +1,6 @@
 package com.example.weatherapp.home.viewmodel
 
+import android.content.SharedPreferences
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,8 @@ import kotlin.random.Random
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(private val repo: Repository) : ViewModel() {
 
+    private lateinit var sharedPreferences: SharedPreferences
+
     private val _locationStatus = MutableStateFlow<LocationStatus>(LocationStatus.Asking)
     val locationStatus = _locationStatus.asStateFlow()
 
@@ -38,13 +41,6 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
 
     private val _nextDaysForecast = MutableStateFlow<List<ForecastResponse.Data>?>(null)
     val nextDaysForecast = _nextDaysForecast.asStateFlow()
-
-    private val _coord = MutableStateFlow(Pair(0.0, 0.0))
-
-    private val _langPreference = MutableStateFlow("en")
-    val langPreferences = _langPreference.asStateFlow()
-
-    private val _units = MutableStateFlow("metric")
 
     private fun getCurrentWeather(
         lat: Double,
@@ -71,7 +67,7 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         units: String? = "standard",
         lang: String? = "en"
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.getForecastWeather(lat, lon, apiKey, units, lang)
                 .catch {
                     _apiStatus.value = ApiStatus.Failure(it)
@@ -123,18 +119,18 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         }
     }
 
-    private fun getWeather() {
+    private fun getWeather(latitude: Double, longitude: Double) {
         getCurrentWeather(
-            _coord.value.first,
-            _coord.value.second,
-            lang = _langPreference.value,
-            units = _units.value
+            latitude,
+            longitude,
+            lang = sharedPreferences.getString("language", "en"),
+            units = sharedPreferences.getString("units", "metric")
         )
         getForecastWeather(
-            _coord.value.first,
-            _coord.value.second,
-            lang = _langPreference.value,
-            units = _units.value
+            latitude,
+            longitude,
+            lang = sharedPreferences.getString("language", "en"),
+            units = sharedPreferences.getString("units", "metric")
         )
     }
 
@@ -152,15 +148,14 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     }
 
     fun setLocationCoordinates(latitude: Double, longitude: Double) {
-        _coord.value = Pair(latitude, longitude)
-        getWeather()
+        getWeather(latitude, longitude)
     }
 
     fun locationDenied() {
         _locationStatus.value = LocationStatus.Denied
     }
 
-    fun setUnits(units: String) {
-        _units.value = units
+    fun setSharedPreferences(sp: SharedPreferences?) {
+        sp?.let { sharedPreferences = it }
     }
 }

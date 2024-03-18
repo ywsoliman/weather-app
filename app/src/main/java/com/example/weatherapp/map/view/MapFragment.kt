@@ -1,5 +1,6 @@
 package com.example.weatherapp.map.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentMapBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
@@ -55,10 +58,23 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val args: MapFragmentArgs by navArgs()
+        val mode = args.mode
+
         binding.saveBtn.setOnClickListener {
             coordinates?.let {
-                mapViewModel.addPlaceToFavorites(it)
-                view.findNavController().navigate(R.id.action_mapFragment_to_favoritesFragment)
+                if (mode == Mode.CHANGE_LOCATION) {
+                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
+                    with(sharedPref.edit()) {
+                        putFloat(Constants.LATITUDE, it.latitude.toFloat())
+                        putFloat(Constants.LONGITUDE, it.longitude.toFloat())
+                        apply()
+                    }
+                    findNavController().navigate(R.id.action_mapFragment_to_settingsFragment)
+                } else if (mode == Mode.ADD_LOCATION) {
+                    mapViewModel.addPlaceToFavorites(it)
+                    view.findNavController().navigate(R.id.action_mapFragment_to_favoritesFragment)
+                }
             }
         }
 

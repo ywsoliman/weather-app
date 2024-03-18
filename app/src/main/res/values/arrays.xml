@@ -1,7 +1,7 @@
 <resources>
     <string-array name="location_entries">
-        <item>Map</item>
-        <item>GPS</item>
+        <item>@string/map</item>
+        <item>@string/gps</item>
     </string-array>
 
     <string-array name="location_values">
@@ -10,8 +10,8 @@
     </string-array>
 
     <string-array name="language_entries">
-        <item>English</item>
-        <item>Arabic</item>
+        <item>@string/english</item>
+        <item>@string/arabic</item>
     </string-array>
 
     <string-array name="language_values">
@@ -20,9 +20,9 @@
     </string-array>
 
     <string-array name="units_entries">
-        <item>Standard</item>
-        <item>Metric</item>
-        <item>Imperial</item>
+        <item>@string/standard</item>
+        <item>@string/metric</item>
+        <item>@string/imperial</item>
     </string-array>
 
     <string-array name="units_values">

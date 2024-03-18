@@ -16,16 +16,17 @@ import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.favorite.viewmodel.FavoriteViewModel
+import com.example.weatherapp.map.view.Mode
 import com.example.weatherapp.models.GeocodingResponseItem
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
 
     private lateinit var binding: FragmentFavoritesBinding
+    private lateinit var favoriteAdapter: FavoritesAdapter
     private val favoriteViewModel: FavoriteViewModel by viewModels {
         FavoriteViewModelFactory(
             Repository.getInstance(
@@ -47,24 +48,27 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.adapter = FavoritesAdapter(requireContext(), {
+        favoriteAdapter = FavoritesAdapter(requireContext(), {
             val action = FavoritesFragmentDirections.actionFavoritesFragmentToHomeFragment(it)
             findNavController().navigate(action)
         }, {
             handleDeletePlaceButton(it)
         })
 
+        binding.adapter = favoriteAdapter
+
         binding.favoriteFAB.setOnClickListener {
-            it.findNavController().navigate(R.id.action_favoritesFragment_to_mapFragment)
+            val action =
+                FavoritesFragmentDirections.actionFavoritesFragmentToMapFragment(Mode.ADD_LOCATION)
+            it.findNavController().navigate(action)
         }
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                favoriteViewModel.favoritePlaces.collectLatest {
-                    binding.adapter?.submitList(it)
+                favoriteViewModel.favoritePlaces.collect {
+                    favoriteAdapter.submitList(it)
                 }
             }
-
         }
     }
 

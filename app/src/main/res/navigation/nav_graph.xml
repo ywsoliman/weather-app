@@ -43,9 +43,19 @@
             app:destination="@id/favoritesFragment"
             app:popUpTo="@id/favoritesFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="mode"
+            app:argType="com.example.weatherapp.map.view.Mode" />
+        <action
+            android:id="@+id/action_mapFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.weatherapp.settings.view.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
 </navigation>

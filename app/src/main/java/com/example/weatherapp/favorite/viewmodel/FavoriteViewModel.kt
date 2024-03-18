@@ -1,13 +1,15 @@
 package com.example.weatherapp.favorite.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.GeocodingResponseItem
 import com.example.weatherapp.models.IRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
+private const val TAG = "FavoriteViewModel"
 
 class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
 
@@ -21,7 +23,8 @@ class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
     private fun getFavoritePlaces() {
         viewModelScope.launch {
             repo.getFavoritePlaces()
-                .collectLatest {
+                .collect {
+                    Log.i(TAG, "getFavoritePlaces: places = $it")
                     _favoritePlaces.value = it
                 }
         }

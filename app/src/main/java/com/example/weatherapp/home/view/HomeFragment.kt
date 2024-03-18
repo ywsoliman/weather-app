@@ -32,6 +32,7 @@ import com.example.weatherapp.home.viewmodel.HomeViewModelFactory
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.ApiStatus
+import com.example.weatherapp.util.Constants
 import com.example.weatherapp.util.LocationStatus
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -82,12 +83,20 @@ class HomeFragment : Fragment() {
         val selectedFavoritePlace = args.favoritePlace
 
         if (selectedFavoritePlace != null) {
+            homeViewModel.locationGranted()
             homeViewModel.setLocationCoordinates(
                 selectedFavoritePlace.lat,
                 selectedFavoritePlace.lon
             )
         } else {
-            handleLocation()
+            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+            val lat = sharedPref?.getFloat(Constants.LATITUDE, 0f) ?: 0f
+            val lon = sharedPref?.getFloat(Constants.LONGITUDE, 0f) ?: 0f
+            if (lat != 0f && lon != 0f) {
+                homeViewModel.locationGranted()
+                homeViewModel.setLocationCoordinates(lat.toDouble(), lon.toDouble())
+            } else
+                handleLocation()
         }
 
         binding.allowBtn.setOnClickListener { askForLocation() }
@@ -99,8 +108,8 @@ class HomeFragment : Fragment() {
         binding.lifecycleOwner = this
 
         lifecycleScope.launch {
-            homeViewModel.locationStatus.collectLatest { locationStatus ->
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.locationStatus.collectLatest { locationStatus ->
                     when (locationStatus) {
                         is LocationStatus.Granted -> {
                             handleLocationGranted()
@@ -150,31 +159,33 @@ class HomeFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun handleLocationGranted() {
-        Log.i(TAG, "handleLocationGranted: ")
+        Log.i(TAG, "handleLocationGranted: function first line")
         lifecycleScope.launch {
-            homeViewModel.apiStatus.collectLatest { apiStatus ->
-                Log.i(TAG, "handleLocationGranted: $apiStatus")
-                when (apiStatus) {
-                    is ApiStatus.Success -> {
-                        binding.allowLocationCard.visibility = View.GONE
-                        binding.progressBar.visibility = View.GONE
-                        binding.weatherDetails.visibility = View.VISIBLE
-                        Log.i(TAG, "handleLocationGranted: $apiStatus")
-                    }
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.apiStatus.collectLatest { apiStatus ->
+                    Log.i(TAG, "handleLocationGranted: $apiStatus")
+                    when (apiStatus) {
+                        is ApiStatus.Success -> {
+                            binding.allowLocationCard.visibility = View.GONE
+                            binding.progressBar.visibility = View.GONE
+                            binding.weatherDetails.visibility = View.VISIBLE
+                            Log.i(TAG, "handleLocationGranted: $apiStatus")
+                        }
 
-                    is ApiStatus.Failure -> {
-                        Snackbar.make(
-                            requireView(),
-                            "There is a problem with the server. Couldn't fetch the weather.",
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                        Log.i(TAG, "handleLocationGranted: $apiStatus")
-                    }
+                        is ApiStatus.Failure -> {
+                            Snackbar.make(
+                                requireView(),
+                                "There is a problem with the server. Couldn't fetch the weather.",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            Log.i(TAG, "handleLocationGranted: $apiStatus")
+                        }
 
-                    is ApiStatus.Loading -> {
-                        binding.weatherDetails.visibility = View.GONE
-                        binding.progressBar.visibility = View.VISIBLE
-                        Log.i(TAG, "handleLocationGranted: $apiStatus")
+                        is ApiStatus.Loading -> {
+                            binding.weatherDetails.visibility = View.GONE
+                            binding.progressBar.visibility = View.VISIBLE
+                            Log.i(TAG, "handleLocationGranted: $apiStatus")
+                        }
                     }
                 }
             }
