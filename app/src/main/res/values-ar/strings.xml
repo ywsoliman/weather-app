@@ -55,5 +55,6 @@
     <string name="disable_notifications">تعطيل الإشعارات</string>
     <string name="get_location_from">الحصول على الموقع من</string>
     <string name="get_units_in">الحصول على الوحدات في</string>
+    <string name="no_favorite_places">لا توجد أماكن مفضلة</string>
 
 </resources>

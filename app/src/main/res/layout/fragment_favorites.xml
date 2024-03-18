@@ -10,30 +10,58 @@
             type="com.example.weatherapp.favorite.view.FavoritesAdapter" />
     </data>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
         tools:context=".favorite.view.FavoritesFragment">
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvFavPlaces"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/favoriteFAB"
-            android:layout_marginBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:adapter="@{adapter}"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/favoriteFAB"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/favoriteFAB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
             android:clickable="true"
             android:contentDescription="@string/add_place_to_favorites"
             android:focusable="true"
-            android:src="@android:drawable/ic_input_add" />
-    </RelativeLayout>
+            android:src="@android:drawable/ic_input_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/noPlacesImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/no_favorite_places"
+            android:src="@drawable/ic_bookmark"
+            app:layout_constraintBottom_toTopOf="@+id/noPlacesText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/noPlacesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/no_favorite_places"
+            app:drawableTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/noPlacesImage"
+            app:layout_constraintStart_toStartOf="@+id/noPlacesImage"
+            app:layout_constraintTop_toBottomOf="@+id/noPlacesImage" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

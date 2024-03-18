@@ -66,7 +66,14 @@ class FavoritesFragment : Fragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 favoriteViewModel.favoritePlaces.collect {
-                    favoriteAdapter.submitList(it)
+                    if (it.isEmpty()) {
+                        binding.noPlacesImage.visibility = View.VISIBLE
+                        binding.noPlacesText.visibility = View.VISIBLE
+                    } else {
+                        binding.noPlacesImage.visibility = View.GONE
+                        binding.noPlacesText.visibility = View.GONE
+                        favoriteAdapter.submitList(it)
+                    }
                 }
             }
         }

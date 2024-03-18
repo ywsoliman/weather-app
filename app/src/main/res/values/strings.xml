@@ -55,5 +55,6 @@
     <string name="disable_notifications">Disable notifications</string>
     <string name="get_location_from">Get location from</string>
     <string name="get_units_in">Get units in</string>
+    <string name="no_favorite_places">No Favorite Places</string>
 
 </resources>
