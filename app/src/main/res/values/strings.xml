@@ -56,5 +56,7 @@
     <string name="get_location_from">Get location from</string>
     <string name="get_units_in">Get units in</string>
     <string name="no_favorite_places">No Favorite Places</string>
+    <string name="add_alert_button">Add Alert Button</string>
+    <string name="no_alerts">No Alerts</string>
 
 </resources>
