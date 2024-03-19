@@ -2,7 +2,7 @@ package com.example.weatherapp.models
 
 import com.example.weatherapp.util.Constants
 import kotlinx.coroutines.flow.Flow
-import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
+import retrofit2.Response
 
 interface IRepository {
     suspend fun getCurrentWeather(
@@ -25,9 +25,9 @@ interface IRepository {
         lat: Double,
         lon: Double,
         apiKey: String = Constants.API_KEY
-    ): Flow<GeocodingResponse>
+    ): Response<FavoritePlaceDTO>
 
-    suspend fun addPlaceToFavorites(place: GeocodingResponseItem)
-    suspend fun getFavoritePlaces(): Flow<List<GeocodingResponseItem>>
-    suspend fun deleteFromFavorites(place: GeocodingResponseItem)
+    suspend fun addPlaceToFavorites(place: FavoritePlaceDTO)
+    suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>>
+    suspend fun deleteFromFavorites(place: FavoritePlaceDTO)
 }

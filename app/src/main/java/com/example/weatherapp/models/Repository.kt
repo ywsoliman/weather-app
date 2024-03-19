@@ -3,7 +3,7 @@ package com.example.weatherapp.models
 import com.example.weatherapp.db.IWeatherLocalDataSource
 import com.example.weatherapp.network.IWeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
-import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
+import retrofit2.Response
 
 class Repository private constructor(
     private val localDataSource: IWeatherLocalDataSource,
@@ -52,19 +52,19 @@ class Repository private constructor(
         lat: Double,
         lon: Double,
         apiKey: String
-    ): Flow<GeocodingResponse> {
+    ): Response<FavoritePlaceDTO> {
         return remoteDataSource.getGeocoding(lat, lon, apiKey)
     }
 
-    override suspend fun addPlaceToFavorites(place: GeocodingResponseItem) {
+    override suspend fun addPlaceToFavorites(place: FavoritePlaceDTO) {
         localDataSource.addPlaceToFavorite(place)
     }
 
-    override suspend fun getFavoritePlaces(): Flow<List<GeocodingResponseItem>> {
+    override suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
         return localDataSource.getFavoritePlaces()
     }
 
-    override suspend fun deleteFromFavorites(place: GeocodingResponseItem) {
+    override suspend fun deleteFromFavorites(place: FavoritePlaceDTO) {
         localDataSource.deleteFromFavorites(place)
     }
 

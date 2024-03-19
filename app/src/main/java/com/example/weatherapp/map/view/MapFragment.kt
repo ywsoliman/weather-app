@@ -1,6 +1,7 @@
 package com.example.weatherapp.map.view
 
 import android.content.Context
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +13,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.preference.PreferenceManager
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentMapBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.map.viewmodel.MapViewModel
 import com.example.weatherapp.map.viewmodel.MapViewModelFactory
+import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.Constants
@@ -32,6 +35,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import java.util.Locale
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
@@ -117,7 +121,26 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     }
                     findNavController().navigate(R.id.action_mapFragment_to_settingsFragment)
                 } else if (mode == Mode.ADD_LOCATION) {
-                    mapViewModel.addPlaceToFavorites(it)
+                    val lang = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        .getString("language", "en")
+
+                    val geocoder =
+                        Geocoder(requireContext(), Locale(lang!!)).getFromLocation(
+                            it.latitude,
+                            it.longitude,
+                            1
+                        )?.get(0)
+
+                    geocoder?.let { address ->
+                        val favoritePlace = FavoritePlaceDTO(
+                            longitude = address.longitude,
+                            latitude = address.latitude,
+                            countryName = address.countryName,
+                            adminArea = address.adminArea,
+                            subAdminArea = address.subAdminArea
+                        )
+                        mapViewModel.addPlaceToFavorites(favoritePlace)
+                    }
                     view.findNavController().navigate(R.id.action_mapFragment_to_favoritesFragment)
                 }
             }

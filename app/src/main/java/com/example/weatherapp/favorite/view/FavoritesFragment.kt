@@ -17,7 +17,7 @@ import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.favorite.viewmodel.FavoriteViewModel
 import com.example.weatherapp.map.view.Mode
-import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
+import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -48,7 +48,7 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        favoriteAdapter = FavoritesAdapter(requireContext(), {
+        favoriteAdapter = FavoritesAdapter({
             val action = FavoritesFragmentDirections.actionFavoritesFragmentToHomeFragment(it)
             findNavController().navigate(action)
         }, {
@@ -79,7 +79,7 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun handleDeletePlaceButton(it: GeocodingResponseItem) {
+    private fun handleDeletePlaceButton(it: FavoritePlaceDTO) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.delete_selected_place))
             .setMessage(getString(R.string.selected_place_will_be_permanently_removed_from_favorites))

@@ -85,8 +85,8 @@ class HomeFragment : Fragment() {
         if (selectedFavoritePlace != null) {
             homeViewModel.locationGranted()
             homeViewModel.setLocationCoordinates(
-                selectedFavoritePlace.lat,
-                selectedFavoritePlace.lon
+                selectedFavoritePlace.latitude,
+                selectedFavoritePlace.longitude
             )
         } else {
             val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
@@ -238,6 +238,7 @@ class HomeFragment : Fragment() {
                     val latitude = locationResult.lastLocation?.latitude
                     if (latitude != null && longitude != null) {
                         Log.i(TAG, "onLocationResult: $latitude, $longitude")
+
                         homeViewModel.locationGranted()
                         homeViewModel.setLocationCoordinates(latitude, longitude)
                     }
@@ -255,13 +256,13 @@ class HomeFragment : Fragment() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION_CODE) {
-            if (grantResults.isNotEmpty()) {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    getFreshLocation()
-                else
-                    homeViewModel.locationDenied()
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getFreshLocation()
+            } else {
+                homeViewModel.locationDenied()
             }
         }
     }
+
 
 }

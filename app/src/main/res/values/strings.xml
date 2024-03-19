@@ -58,5 +58,8 @@
     <string name="no_favorite_places">No Favorite Places</string>
     <string name="add_alert_button">Add Alert Button</string>
     <string name="no_alerts">No Alerts</string>
+    <string name="to">To</string>
+    <string name="from">From</string>
+    <string name="alarm">Alarm</string>
 
 </resources>

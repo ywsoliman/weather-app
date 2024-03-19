@@ -1,24 +1,21 @@
 package com.example.weatherapp.favorite.view
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
-import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
+import com.example.weatherapp.models.FavoritePlaceDTO
 
 class FavoritesAdapter(
-    private val context: Context,
-    private val onClickListener: (GeocodingResponseItem) -> Unit,
-    private val deleteListener: (GeocodingResponseItem) -> Unit
+    private val onClickListener: (FavoritePlaceDTO) -> Unit,
+    private val deleteListener: (FavoritePlaceDTO) -> Unit
 ) :
-    ListAdapter<GeocodingResponseItem, FavoritesAdapter.FavoritesViewHolder>(FavoritesDiffUtil()) {
+    ListAdapter<FavoritePlaceDTO, FavoritesAdapter.FavoritesViewHolder>(FavoritesDiffUtil()) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -31,11 +28,7 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         val current = getItem(position)
-        val settingsPref = PreferenceManager.getDefaultSharedPreferences(context)
-        val placeString: String = if (settingsPref.getString("language", "en") == "en")
-            "${current.localNames?.en}, ${current.country}"
-        else
-            "${current.localNames?.ar}، ${current.country}"
+        val placeString  = "${current.subAdminArea}, ${current.adminArea}, ${current.countryName}"
         holder.placeName.text = placeString
     }
 
@@ -53,17 +46,17 @@ class FavoritesAdapter(
         val placeName: TextView = itemView.findViewById(R.id.placeNameText)
     }
 
-    class FavoritesDiffUtil : DiffUtil.ItemCallback<GeocodingResponseItem>() {
+    class FavoritesDiffUtil : DiffUtil.ItemCallback<FavoritePlaceDTO>() {
         override fun areItemsTheSame(
-            oldItem: GeocodingResponseItem,
-            newItem: GeocodingResponseItem
+            oldItem: FavoritePlaceDTO,
+            newItem: FavoritePlaceDTO
         ): Boolean {
-            return oldItem.lat == newItem.lat && oldItem.lon == newItem.lon
+            return oldItem.latitude == newItem.latitude && oldItem.longitude == newItem.longitude
         }
 
         override fun areContentsTheSame(
-            oldItem: GeocodingResponseItem,
-            newItem: GeocodingResponseItem
+            oldItem: FavoritePlaceDTO,
+            newItem: FavoritePlaceDTO
         ): Boolean {
             return oldItem == newItem
         }

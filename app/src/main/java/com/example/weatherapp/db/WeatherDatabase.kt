@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
+import com.example.weatherapp.models.FavoritePlaceDTO
 
-@Database(entities = [GeocodingResponseItem::class], version = 1)
+@Database(entities = [FavoritePlaceDTO::class], version = 1)
 abstract class WeatherDatabase : RoomDatabase() {
 
     abstract fun getDao(): WeatherDAO
