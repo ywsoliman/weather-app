@@ -3,11 +3,13 @@ package com.example.weatherapp.favorite.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.models.GeocodingResponseItem
+import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
 import com.example.weatherapp.models.IRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "FavoriteViewModel"
 
@@ -21,7 +23,7 @@ class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
     }
 
     private fun getFavoritePlaces() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.getFavoritePlaces()
                 .collect {
                     Log.i(TAG, "getFavoritePlaces: places = $it")
@@ -31,8 +33,9 @@ class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
     }
 
     fun deleteFromFavorites(place: GeocodingResponseItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repo.deleteFromFavorites(place)
+            getFavoritePlaces()
         }
     }
 

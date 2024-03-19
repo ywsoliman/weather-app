@@ -12,9 +12,9 @@
         tools:layout="@layout/fragment_home">
         <argument
             android:name="favoritePlace"
-            android:defaultValue="@null"
-            app:argType="com.example.weatherapp.models.GeocodingResponseItem"
-            app:nullable="true" />
+            app:argType="com.example.weatherapp.models.GeocodingResponse$GeocodingResponseItem"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/alertsFragment"

@@ -17,7 +17,7 @@ import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.favorite.viewmodel.FavoriteViewModel
 import com.example.weatherapp.map.view.Mode
-import com.example.weatherapp.models.GeocodingResponseItem
+import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

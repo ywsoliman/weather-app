@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
-import com.example.weatherapp.models.GeocodingResponseItem
+import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
 
 class FavoritesAdapter(
     private val context: Context,

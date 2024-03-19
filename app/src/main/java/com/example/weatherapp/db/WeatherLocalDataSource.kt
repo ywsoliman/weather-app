@@ -1,7 +1,7 @@
 package com.example.weatherapp.db
 
 import android.content.Context
-import com.example.weatherapp.models.GeocodingResponseItem
+import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
 import kotlinx.coroutines.flow.Flow
 
 class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {

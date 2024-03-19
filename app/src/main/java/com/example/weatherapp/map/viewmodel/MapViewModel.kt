@@ -20,8 +20,8 @@ class MapViewModel(private val repo: IRepository) : ViewModel() {
                     Log.i(TAG, "addPlaceToFavorites: catch = ${it.message}")
                 }
                 .collect {
-                    if (it.response.isNotEmpty())
-                        repo.addPlaceToFavorites(it.response[0])
+                    if (it.isNotEmpty())
+                        repo.addPlaceToFavorites(it[0])
                 }
         }
     }

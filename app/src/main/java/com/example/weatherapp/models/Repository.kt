@@ -3,6 +3,7 @@ package com.example.weatherapp.models
 import com.example.weatherapp.db.IWeatherLocalDataSource
 import com.example.weatherapp.network.IWeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
 
 class Repository private constructor(
     private val localDataSource: IWeatherLocalDataSource,

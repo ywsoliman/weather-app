@@ -29,12 +29,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapBinding
+    private lateinit var placesClient: PlacesClient
     private lateinit var googleMap: GoogleMap
     private lateinit var autoCompleteFragment: AutocompleteSupportFragment
     private var coordinates: LatLng? = null
@@ -61,28 +63,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val args: MapFragmentArgs by navArgs()
         val mode = args.mode
 
-        binding.saveBtn.setOnClickListener {
-            coordinates?.let {
-                if (mode == Mode.CHANGE_LOCATION) {
-                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
-                    with(sharedPref.edit()) {
-                        putFloat(Constants.LATITUDE, it.latitude.toFloat())
-                        putFloat(Constants.LONGITUDE, it.longitude.toFloat())
-                        apply()
-                    }
-                    findNavController().navigate(R.id.action_mapFragment_to_settingsFragment)
-                } else if (mode == Mode.ADD_LOCATION) {
-                    mapViewModel.addPlaceToFavorites(it)
-                    view.findNavController().navigate(R.id.action_mapFragment_to_favoritesFragment)
-                }
-            }
-        }
+        Places.initialize(requireActivity().applicationContext, Constants.GOOGLE_MAPS_KEY)
 
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.googleMapsFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        Places.initialize(requireActivity().applicationContext, Constants.GOOGLE_MAPS_KEY)
         autoCompleteFragment = childFragmentManager.findFragmentById(R.id.autoCompleteFragment)
                 as AutocompleteSupportFragment
         autoCompleteFragment.setPlaceFields(
@@ -119,6 +105,23 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
 
         })
+
+        binding.saveBtn.setOnClickListener {
+            coordinates?.let {
+                if (mode == Mode.CHANGE_LOCATION) {
+                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
+                    with(sharedPref.edit()) {
+                        putFloat(Constants.LATITUDE, it.latitude.toFloat())
+                        putFloat(Constants.LONGITUDE, it.longitude.toFloat())
+                        apply()
+                    }
+                    findNavController().navigate(R.id.action_mapFragment_to_settingsFragment)
+                } else if (mode == Mode.ADD_LOCATION) {
+                    mapViewModel.addPlaceToFavorites(it)
+                    view.findNavController().navigate(R.id.action_mapFragment_to_favoritesFragment)
+                }
+            }
+        }
 
     }
 

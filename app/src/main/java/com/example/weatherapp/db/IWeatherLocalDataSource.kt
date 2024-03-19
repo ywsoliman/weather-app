@@ -1,6 +1,6 @@
 package com.example.weatherapp.db
 
-import com.example.weatherapp.models.GeocodingResponseItem
+import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
 import kotlinx.coroutines.flow.Flow
 
 interface IWeatherLocalDataSource {

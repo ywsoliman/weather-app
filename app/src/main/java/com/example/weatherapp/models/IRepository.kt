@@ -2,6 +2,7 @@ package com.example.weatherapp.models
 
 import com.example.weatherapp.util.Constants
 import kotlinx.coroutines.flow.Flow
+import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
 
 interface IRepository {
     suspend fun getCurrentWeather(

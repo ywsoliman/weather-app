@@ -48,8 +48,12 @@ object WeatherRemoteDataSource : IWeatherRemoteDataSource {
     ): Flow<GeocodingResponse> {
         return flow {
             val response = dao.getGeocoding(lat, lon)
+            Log.i(TAG, "getGeocoding: response = ${response.body().toString()}")
             if (response.isSuccessful)
-                response.body()?.let { emit(it) }
+                response.body()?.let {
+                    emit(it)
+                    Log.i(TAG, "getGeocoding: emit = $it")
+                }
             else
                 Log.i(TAG, "getGeocoding: WeatherRemoteDataSource -> FAILED")
         }

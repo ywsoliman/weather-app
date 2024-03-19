@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.weatherapp.models.GeocodingResponseItem
+import com.example.weatherapp.models.GeocodingResponse.GeocodingResponseItem
 
 @Database(entities = [GeocodingResponseItem::class], version = 1)
 abstract class WeatherDatabase : RoomDatabase() {
