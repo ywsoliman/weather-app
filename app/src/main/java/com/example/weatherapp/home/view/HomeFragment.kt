@@ -83,7 +83,6 @@ class HomeFragment : Fragment() {
         val selectedFavoritePlace = args.favoritePlace
 
         if (selectedFavoritePlace != null) {
-            homeViewModel.locationGranted()
             homeViewModel.setLocationCoordinates(
                 selectedFavoritePlace.latitude,
                 selectedFavoritePlace.longitude
@@ -93,7 +92,6 @@ class HomeFragment : Fragment() {
             val lat = sharedPref?.getFloat(Constants.LATITUDE, 0f) ?: 0f
             val lon = sharedPref?.getFloat(Constants.LONGITUDE, 0f) ?: 0f
             if (lat != 0f && lon != 0f) {
-                homeViewModel.locationGranted()
                 homeViewModel.setLocationCoordinates(lat.toDouble(), lon.toDouble())
             } else
                 handleLocation()
@@ -238,8 +236,10 @@ class HomeFragment : Fragment() {
                     val latitude = locationResult.lastLocation?.latitude
                     if (latitude != null && longitude != null) {
                         Log.i(TAG, "onLocationResult: $latitude, $longitude")
-
-                        homeViewModel.locationGranted()
+                        PreferenceManager.getDefaultSharedPreferences(requireContext())
+                            .edit()
+                            .putString("location", "gps")
+                            .apply()
                         homeViewModel.setLocationCoordinates(latitude, longitude)
                     }
                     fusedClient.removeLocationUpdates(this)

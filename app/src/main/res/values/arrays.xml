@@ -19,16 +19,27 @@
         <item>ar</item>
     </string-array>
 
-    <string-array name="units_entries">
-        <item>@string/standard</item>
-        <item>@string/metric</item>
-        <item>@string/imperial</item>
+    <string-array name="temp_entries">
+        <item>@string/kelvin</item>
+        <item>@string/celsius</item>
+        <item>@string/fahrenheit</item>
     </string-array>
 
-    <string-array name="units_values">
-        <item>standard</item>
-        <item>metric</item>
-        <item>imperial</item>
+    <string-array name="temp_values">
+        <item>kelvin</item>
+        <item>kelvin</item>
+        <item>celsius</item>
+        <item>fahrenheit</item>
+    </string-array>
+
+    <string-array name="wind_entries">
+        <item>@string/meter_sec</item>
+        <item>@string/mile_hour</item>
+    </string-array>
+
+    <string-array name="wind_values">
+        <item>m/s</item>
+        <item>mph</item>
     </string-array>
 
 </resources>

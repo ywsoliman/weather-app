@@ -54,12 +54,15 @@
     <string name="application_language">Application language</string>
     <string name="disable_notifications">Disable notifications</string>
     <string name="get_location_from">Get location from</string>
-    <string name="get_units_in">Get units in</string>
     <string name="no_favorite_places">No Favorite Places</string>
     <string name="add_alert_button">Add Alert Button</string>
     <string name="no_alerts">No Alerts</string>
     <string name="to">To</string>
     <string name="from">From</string>
     <string name="alarm">Alarm</string>
+    <string name="temperature_header">Temperature</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
 
 </resources>

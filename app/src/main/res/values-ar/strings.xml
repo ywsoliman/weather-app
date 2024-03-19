@@ -54,9 +54,15 @@
     <string name="application_language">لغة التطبيق</string>
     <string name="disable_notifications">تعطيل الإشعارات</string>
     <string name="get_location_from">الحصول على الموقع من</string>
-    <string name="get_units_in">الحصول على الوحدات في</string>
     <string name="no_favorite_places">لا توجد أماكن مفضلة</string>
     <string name="add_alert_button">زر إضافة التنبيه</string>
     <string name="no_alerts">لا توجد تنبيهات</string>
+    <string name="to">إلى</string>
+    <string name="from">من</string>
+    <string name="alarm">تنبيه</string>
+    <string name="temperature_header">درجة الحرارة</string>
+    <string name="kelvin">كلڤن</string>
+    <string name="celsius">مئوية</string>
+    <string name="fahrenheit">فهرنهايت</string>
 
 </resources>

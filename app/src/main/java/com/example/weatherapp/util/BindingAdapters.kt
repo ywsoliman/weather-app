@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.databinding.BindingAdapter
+import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
 import java.time.LocalDate
@@ -38,3 +39,39 @@ fun convertDateToDay(textView: TextView, time: String) {
     textView.text = date.dayOfWeek.toString().substring(0, 3)
 }
 
+@BindingAdapter("convertSpeed")
+fun convertSpeedAccordingToTemp(textView: TextView, windSpeed: Double) {
+
+    val settingsPref = PreferenceManager.getDefaultSharedPreferences(textView.context)
+    val temp = settingsPref.getString("temperature", "celsius")
+    val speed = settingsPref.getString("wind", "m/s")
+
+    val newWindSpeed = when (speed) {
+        "m/s" -> {
+            if (temp == "fahrenheit")
+                convertMetersPerSecondToMilesPerHour(windSpeed)
+            else
+                windSpeed
+        }
+
+        else -> {
+            if (temp == "kelvin" || temp == "celsius")
+                convertMilesPerHourToMetersPerSecond(windSpeed)
+            else
+                windSpeed
+        }
+    }
+
+    textView.text = String.format("%.2f %s", newWindSpeed, speed)
+
+    // temp	-> Kelvin	Celsius	    Fahrenheit
+    // wind -> m/s      m/s	        mpa
+}
+
+fun convertMetersPerSecondToMilesPerHour(num: Double): Double {
+    return num * 2.237
+}
+
+fun convertMilesPerHourToMetersPerSecond(num: Double): Double {
+    return num / 2.237
+}

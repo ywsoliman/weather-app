@@ -124,15 +124,23 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
             latitude,
             longitude,
             lang = sharedPreferences.getString("language", "en"),
-            units = sharedPreferences.getString("units", "metric")
+            units = convertTemperatureToUnits()
         )
         getForecastWeather(
             latitude,
             longitude,
             lang = sharedPreferences.getString("language", "en"),
-            units = sharedPreferences.getString("units", "metric")
+            units = convertTemperatureToUnits()
         )
     }
+
+    private fun convertTemperatureToUnits() =
+        if (sharedPreferences.getString("temperature", "celsius") == "celsius")
+            "metric"
+        else if (sharedPreferences.getString("temperature", "celsius") == "kelvin")
+            "standard"
+        else
+            "imperial"
 
     fun getCurrentDateFormatted(): String {
         val calendar = Calendar.getInstance()
@@ -148,6 +156,7 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     }
 
     fun setLocationCoordinates(latitude: Double, longitude: Double) {
+        locationGranted()
         getWeather(latitude, longitude)
     }
 

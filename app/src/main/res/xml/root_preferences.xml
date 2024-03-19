@@ -5,7 +5,7 @@
         app:title="@string/location_header">
 
         <ListPreference
-            app:defaultValue="map"
+            app:defaultValue=""
             app:entries="@array/location_entries"
             app:entryValues="@array/location_values"
             app:key="location"
@@ -33,11 +33,19 @@
         app:title="@string/units_of_measurements">
 
         <ListPreference
-            app:defaultValue="metric"
-            app:entries="@array/units_entries"
-            app:entryValues="@array/units_values"
-            app:key="units"
-            app:title="@string/get_units_in"
+            app:defaultValue="celsius"
+            app:entries="@array/temp_entries"
+            app:entryValues="@array/temp_values"
+            app:key="temperature"
+            app:title="@string/temperature_header"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="m/s"
+            app:entries="@array/wind_entries"
+            app:entryValues="@array/wind_values"
+            app:key="wind"
+            app:title="@string/wind_speed"
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
