@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.CurrentWeatherResponse
 import com.example.weatherapp.models.ForecastResponse
 import com.example.weatherapp.models.Repository
+import com.example.weatherapp.network.WeatherCache
 import com.example.weatherapp.util.ApiStatus
 import com.example.weatherapp.util.Constants
 import com.example.weatherapp.util.LocationStatus
@@ -48,11 +49,20 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         units: String? = "metric",
         lang: String? = "en"
     ) {
+
+        val currentWeather = WeatherCache.currentWeather
+        if (currentWeather != null) {
+            _currentWeather.value = currentWeather
+            _apiStatus.value = ApiStatus.Success
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
             repo.getCurrentWeather(lat, lon, apiKey, units, lang)
                 .catch {
                     _apiStatus.value = ApiStatus.Failure(it)
                 }.collect {
+                    WeatherCache.currentWeather = it
                     _currentWeather.value = it
                     _apiStatus.value = ApiStatus.Success
                 }
@@ -66,11 +76,21 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         units: String? = "standard",
         lang: String? = "en"
     ) {
+
+        val forecast = WeatherCache.currentForecast
+        if (forecast != null) {
+            getTodayForecast(forecast.list)
+            getNextDaysForecast(forecast.list)
+            _apiStatus.value = ApiStatus.Success
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
             repo.getForecastWeather(lat, lon, apiKey, units, lang)
                 .catch {
                     _apiStatus.value = ApiStatus.Failure(it)
                 }.collect {
+                    WeatherCache.currentForecast = it
                     getTodayForecast(it.list)
                     getNextDaysForecast(it.list)
                     _apiStatus.value = ApiStatus.Success
@@ -155,7 +175,6 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
     }
 
     fun setLocationCoordinates(latitude: Double, longitude: Double) {
-        locationGranted()
         getWeather(latitude, longitude)
     }
 
