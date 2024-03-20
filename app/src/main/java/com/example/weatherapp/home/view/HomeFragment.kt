@@ -18,7 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -32,8 +32,8 @@ import com.example.weatherapp.home.viewmodel.HomeViewModelFactory
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.ApiStatus
-import com.example.weatherapp.util.Constants
 import com.example.weatherapp.util.LocationStatus
+import com.example.weatherapp.util.SharedPrefManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -55,7 +55,7 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var todayForecastAdapter: WeatherTimeAdapter
     private lateinit var nextDaysForecastAdapter: NextDaysWeatherAdapter
-    private val homeViewModel: HomeViewModel by activityViewModels {
+    private val homeViewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(
             Repository.getInstance(
                 WeatherLocalDataSource.getInstance(requireContext()),
@@ -88,12 +88,10 @@ class HomeFragment : Fragment() {
                 selectedFavoritePlace.longitude
             )
         } else {
-            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
-            val lat = sharedPref?.getFloat(Constants.LATITUDE, 0f) ?: 0f
-            val lon = sharedPref?.getFloat(Constants.LONGITUDE, 0f) ?: 0f
-            if (lat != 0f && lon != 0f) {
-                homeViewModel.setLocationCoordinates(lat.toDouble(), lon.toDouble())
-            } else
+            val coord = SharedPrefManager.getInstance(requireContext()).getCoordinates()
+            if (coord.latitude != 0.0 && coord.longitude != 0.0)
+                homeViewModel.setLocationCoordinates(coord.latitude, coord.longitude)
+            else
                 handleLocation()
         }
 
@@ -236,10 +234,7 @@ class HomeFragment : Fragment() {
                     val latitude = locationResult.lastLocation?.latitude
                     if (latitude != null && longitude != null) {
                         Log.i(TAG, "onLocationResult: $latitude, $longitude")
-                        PreferenceManager.getDefaultSharedPreferences(requireContext())
-                            .edit()
-                            .putString("location", "gps")
-                            .apply()
+                        SharedPrefManager.getInstance(requireContext()).setLocationSettings("gps")
                         homeViewModel.setLocationCoordinates(latitude, longitude)
                     }
                     fusedClient.removeLocationUpdates(this)

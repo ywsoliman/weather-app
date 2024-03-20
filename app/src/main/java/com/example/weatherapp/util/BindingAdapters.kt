@@ -6,7 +6,6 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.databinding.BindingAdapter
-import androidx.preference.PreferenceManager
 import com.example.weatherapp.R
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -53,9 +52,9 @@ fun convertDateToDay(textView: TextView, time: String) {
 @BindingAdapter("convertSpeed")
 fun convertSpeedAccordingToTemp(textView: TextView, windSpeed: Double) {
 
-    val settingsPref = PreferenceManager.getDefaultSharedPreferences(textView.context)
-    val temp = settingsPref.getString("temperature", "celsius")
-    val speed = settingsPref.getString("wind", "m/s")
+    val sharedPref = SharedPrefManager.getInstance(textView.context)
+    val temp = sharedPref.getTemperatureUnit()
+    val speed = sharedPref.getWindSpeedUnit()
 
     val newWindSpeed = when (speed) {
         "m/s" -> {

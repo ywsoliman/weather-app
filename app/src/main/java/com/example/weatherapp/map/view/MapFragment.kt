@@ -1,6 +1,5 @@
 package com.example.weatherapp.map.view
 
-import android.content.Context
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.preference.PreferenceManager
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentMapBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
@@ -23,6 +21,7 @@ import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.Constants
+import com.example.weatherapp.util.SharedPrefManager
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -40,7 +39,6 @@ import java.util.Locale
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapBinding
-    private lateinit var placesClient: PlacesClient
     private lateinit var googleMap: GoogleMap
     private lateinit var autoCompleteFragment: AutocompleteSupportFragment
     private var coordinates: LatLng? = null
@@ -111,21 +109,19 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         })
 
         binding.saveBtn.setOnClickListener {
-            coordinates?.let {
-                if (mode == Mode.CHANGE_LOCATION) {
-                    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@let
-                    with(sharedPref.edit()) {
-                        putFloat(Constants.LATITUDE, it.latitude.toFloat())
-                        putFloat(Constants.LONGITUDE, it.longitude.toFloat())
-                        apply()
-                    }
-                    findNavController().navigate(R.id.action_mapFragment_to_settingsFragment)
-                } else if (mode == Mode.ADD_LOCATION) {
-                    val lang = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                        .getString("language", "en")
 
+            coordinates?.let {
+
+                if (mode == Mode.CHANGE_LOCATION) {
+                    SharedPrefManager.getInstance(requireContext())
+                        .setCoordinates(it.latitude, it.longitude)
+                    findNavController().navigate(R.id.action_mapFragment_to_settingsFragment)
+
+                } else if (mode == Mode.ADD_LOCATION) {
+
+                    val lang = SharedPrefManager.getInstance(requireContext()).getLanguage()
                     val geocoder =
-                        Geocoder(requireContext(), Locale(lang!!)).getFromLocation(
+                        Geocoder(requireContext(), Locale(lang)).getFromLocation(
                             it.latitude,
                             it.longitude,
                             1
@@ -142,6 +138,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         mapViewModel.addPlaceToFavorites(favoritePlace)
                     }
                     view.findNavController().navigate(R.id.action_mapFragment_to_favoritesFragment)
+
                 }
             }
         }
