@@ -3,10 +3,10 @@ package com.example.weatherapp.util
 import android.os.Build
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.databinding.BindingAdapter
 import androidx.preference.PreferenceManager
-import com.bumptech.glide.Glide
 import com.example.weatherapp.R
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -14,12 +14,23 @@ import java.time.format.DateTimeFormatter
 
 @BindingAdapter("url")
 fun loadImage(imageView: ImageView, url: String?) {
+
     url?.let {
-        Glide.with(imageView.context)
-            .load("https://openweathermap.org/img/wn/$url@2x.png")
-            .placeholder(R.drawable.loading_animation)
-            .error(R.drawable.ic_broken_image)
-            .into(imageView)
+
+        @DrawableRes val weatherImage = when (it) {
+            "01d" -> R.drawable.clear_day
+            "01n" -> R.drawable.clear_night
+            "03d", "03n" -> R.drawable.cloudy
+            "04d", "04n" -> R.drawable.overcast
+            "09d", "09n", "10d", "10n" -> R.drawable.rain
+            "11d", "11n" -> R.drawable.thunderstorms
+            "13d", "13n" -> R.drawable.snow
+            "50d", "50n" -> R.drawable.mist
+            else -> R.drawable.cloudy
+        }
+
+        imageView.setImageResource(weatherImage)
+
     }
 }
 

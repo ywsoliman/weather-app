@@ -20,7 +20,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
-import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(private val repo: Repository) : ViewModel() {
@@ -109,10 +108,10 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
                 restOfDays.forEach { (_, item) ->
                     val minTemp = item.minOf { it.main.temp_min }
                     val maxTemp = item.maxOf { it.main.temp_max }
-                    val randomDay = item[Random.nextInt(item.size)]
-                    randomDay.main.temp_min = minTemp
-                    randomDay.main.temp_max = maxTemp
-                    res.add(randomDay)
+                    val firstDay = item[0]
+                    firstDay.main.temp_min = minTemp
+                    firstDay.main.temp_max = maxTemp
+                    res.add(firstDay)
                 }
                 _nextDaysForecast.emit(res)
             }
