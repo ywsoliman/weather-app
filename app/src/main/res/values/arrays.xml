@@ -27,7 +27,6 @@
 
     <string-array name="temp_values">
         <item>kelvin</item>
-        <item>kelvin</item>
         <item>celsius</item>
         <item>fahrenheit</item>
     </string-array>
