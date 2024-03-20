@@ -53,6 +53,10 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
+    // Instrumented Unit Tests
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    androidTestImplementation("com.google.truth:truth:1.1")
+
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
 
@@ -65,7 +69,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:2.5.3")
 
     // Coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
