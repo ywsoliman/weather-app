@@ -43,13 +43,4 @@ object WeatherRemoteDataSource : IWeatherRemoteDataSource {
         }
     }
 
-    override suspend fun getGeocoding(
-        lat: Double,
-        lon: Double,
-        apiKey: String
-    ): Response<FavoritePlaceDTO> {
-        return withContext(Dispatchers.IO) {
-            dao.getGeocoding(lat, lon)
-        }
-    }
 }

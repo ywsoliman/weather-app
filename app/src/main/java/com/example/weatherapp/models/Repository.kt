@@ -48,14 +48,6 @@ class Repository private constructor(
         return remoteDataSource.getForecastWeather(lat, lon, apiKey, units, lang)
     }
 
-    override suspend fun getGeocoding(
-        lat: Double,
-        lon: Double,
-        apiKey: String
-    ): Response<FavoritePlaceDTO> {
-        return remoteDataSource.getGeocoding(lat, lon, apiKey)
-    }
-
     override suspend fun addPlaceToFavorites(place: FavoritePlaceDTO) {
         localDataSource.addPlaceToFavorite(place)
     }

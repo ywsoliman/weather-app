@@ -21,12 +21,6 @@ interface IRepository {
         lang: String? = "en"
     ): Flow<ForecastResponse>
 
-    suspend fun getGeocoding(
-        lat: Double,
-        lon: Double,
-        apiKey: String = Constants.API_KEY
-    ): Response<FavoritePlaceDTO>
-
     suspend fun addPlaceToFavorites(place: FavoritePlaceDTO)
     suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>>
     suspend fun deleteFromFavorites(place: FavoritePlaceDTO)

@@ -1,11 +1,9 @@
 package com.example.weatherapp.network
 
 import com.example.weatherapp.models.CurrentWeatherResponse
-import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.ForecastResponse
 import com.example.weatherapp.util.Constants
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 
 interface IWeatherRemoteDataSource {
     suspend fun getCurrentWeather(
@@ -24,9 +22,4 @@ interface IWeatherRemoteDataSource {
         lang: String? = "en"
     ): Flow<ForecastResponse>
 
-    suspend fun getGeocoding(
-        lat: Double,
-        lon: Double,
-        apiKey: String
-    ): Response<FavoritePlaceDTO>
 }
