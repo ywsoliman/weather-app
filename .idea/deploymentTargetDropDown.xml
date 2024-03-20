@@ -5,6 +5,9 @@
       <entry key="WeatherDaoTest">
         <State />
       </entry>
+      <entry key="WeatherLocalDataSourceTest">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>
