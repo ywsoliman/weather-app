@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var fusedClient: FusedLocationProviderClient
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var todayForecastAdapter: WeatherTimeAdapter
+    private lateinit var todayForecastAdapter: HourlyWeatherAdapter
     private lateinit var nextDaysForecastAdapter: NextDaysWeatherAdapter
     private val homeViewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(
@@ -96,7 +96,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.allowBtn.setOnClickListener { askForLocation() }
-        todayForecastAdapter = WeatherTimeAdapter()
+        todayForecastAdapter = HourlyWeatherAdapter()
         nextDaysForecastAdapter = NextDaysWeatherAdapter()
         binding.viewModel = homeViewModel
         binding.todayAdapter = todayForecastAdapter
@@ -127,20 +127,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.todayForecast.collectLatest {
-                    todayForecastAdapter.submitList(it)
-                }
-            }
-        }
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.nextDaysForecast.collectLatest {
-                    nextDaysForecastAdapter.submitList(it)
-                }
-            }
-        }
     }
 
     private fun handleLocation() {
@@ -155,25 +141,31 @@ class HomeFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun handleLocationGranted() {
-        Log.i(TAG, "handleLocationGranted: function first line")
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.apiStatus.collectLatest { apiStatus ->
-                    Log.i(TAG, "handleLocationGranted: $apiStatus")
                     when (apiStatus) {
                         is ApiStatus.Success -> {
                             binding.allowLocationCard.visibility = View.GONE
                             binding.progressBar.visibility = View.GONE
                             binding.weatherDetails.visibility = View.VISIBLE
+                            todayForecastAdapter.submitList(
+                                apiStatus.response.hourly.subList(0, 24)
+                            )
+                            nextDaysForecastAdapter.submitList(
+                                apiStatus.response.daily.subList(1, 7)
+                            )
                             Log.i(TAG, "handleLocationGranted: $apiStatus")
                         }
 
                         is ApiStatus.Failure -> {
                             Snackbar.make(
                                 requireView(),
-                                "There is a problem with the server. Couldn't fetch the weather.",
+                                apiStatus.throwable.message.toString(),
                                 Snackbar.LENGTH_LONG
-                            ).show()
+                            )
+                                .setAnchorView(R.id.bottomNavigationView)
+                                .show()
                             Log.i(TAG, "handleLocationGranted: $apiStatus")
                         }
 

@@ -3,7 +3,6 @@ package com.example.weatherapp.models
 import com.example.weatherapp.db.IWeatherLocalDataSource
 import com.example.weatherapp.network.IWeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 
 class Repository private constructor(
     private val localDataSource: IWeatherLocalDataSource,
@@ -28,24 +27,15 @@ class Repository private constructor(
 
     }
 
-    override suspend fun getCurrentWeather(
+    override suspend fun getWeather(
         lat: Double,
         lon: Double,
         apiKey: String,
+        exclude: String,
         units: String?,
         lang: String?
-    ): Flow<CurrentWeatherResponse> {
-        return remoteDataSource.getCurrentWeather(lat, lon, apiKey, units, lang)
-    }
-
-    override suspend fun getForecastWeather(
-        lat: Double,
-        lon: Double,
-        apiKey: String,
-        units: String?,
-        lang: String?
-    ): Flow<ForecastResponse> {
-        return remoteDataSource.getForecastWeather(lat, lon, apiKey, units, lang)
+    ): Flow<WeatherResponse> {
+        return remoteDataSource.getWeather(lat, lon, apiKey, exclude, units, lang)
     }
 
     override suspend fun addPlaceToFavorites(place: FavoritePlaceDTO) {

@@ -14,15 +14,13 @@ import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.weatherapp.R
 import com.example.weatherapp.map.view.Mode
-import com.example.weatherapp.util.Constants
+import com.example.weatherapp.util.SharedPrefManager
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-
-private const val TAG = "SettingsFragment"
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -80,12 +78,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val longitude = locationResult.lastLocation?.longitude
                         val latitude = locationResult.lastLocation?.latitude
                         if (latitude != null && longitude != null) {
-                            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)!!
-                            with(sharedPref.edit()) {
-                                putFloat(Constants.LATITUDE, latitude.toFloat())
-                                putFloat(Constants.LONGITUDE, longitude.toFloat())
-                                apply()
-                            }
+                            SharedPrefManager.getInstance(requireContext())
+                                .setCoordinates(latitude, longitude)
                         }
                         fusedClient.removeLocationUpdates(this)
                     }

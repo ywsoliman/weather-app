@@ -11,7 +11,7 @@
 
         <variable
             name="todayAdapter"
-            type="com.example.weatherapp.home.view.WeatherTimeAdapter" />
+            type="com.example.weatherapp.home.view.HourlyWeatherAdapter" />
 
         <variable
             name="nextDaysAdapter"
@@ -116,29 +116,29 @@
                             android:id="@+id/imageView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
+                            android:layout_marginTop="24dp"
                             android:contentDescription="@string/location_icon"
                             android:src="@drawable/ic_location"
-                            app:layout_constraintBottom_toBottomOf="@+id/currentLocation"
-                            app:layout_constraintEnd_toStartOf="@+id/currentLocation"
-                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintEnd_toEndOf="@+id/currentLocation"
                             app:layout_constraintHorizontal_chainStyle="packed"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/currentLocation"
+                            app:layout_constraintStart_toStartOf="@+id/currentLocation"
+                            app:layout_constraintTop_toTopOf="parent"
                             app:tint="@color/white" />
 
                         <TextView
                             android:id="@+id/currentLocation"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="32dp"
-                            android:text="@{@string/location(viewModel.currentWeather.name, viewModel.currentWeather.sys.country)}"
-                            android:textSize="32sp"
+                            android:layout_marginStart="32dp"
+                            android:layout_marginEnd="32dp"
+                            android:textAlignment="center"
+                            android:textSize="24sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.5"
-                            app:layout_constraintStart_toEndOf="@+id/imageView"
-                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/imageView"
+                            app:locationLat="@{viewModel.weather.lat}"
+                            app:locationLon="@{viewModel.weather.lon}"
                             tools:text="Cairo" />
 
                         <ImageView
@@ -150,14 +150,14 @@
                             app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/currentLocation"
-                            app:url="@{viewModel.currentWeather.weather[0].icon}"
+                            app:url="@{viewModel.weather.current.weather[0].icon}"
                             tools:src="@tools:sample/avatars" />
 
                         <TextView
                             android:id="@+id/currentTemp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{@string/temperature(String.valueOf(Math.round(viewModel.currentWeather.main.temp)))}"
+                            android:text="@{@string/temperature(String.valueOf(Math.round(viewModel.weather.current.temp)))}"
                             android:textSize="72sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="@+id/currentWeatherImage"
@@ -170,7 +170,7 @@
                             android:id="@+id/currentState"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.currentWeather.weather[0].description}"
+                            android:text="@{viewModel.weather.current.weather[0].description}"
                             android:textSize="32sp"
                             app:layout_constraintEnd_toEndOf="@+id/currentTemp"
                             app:layout_constraintStart_toStartOf="@+id/currentTemp"
@@ -258,7 +258,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            app:convertSpeed="@{viewModel.currentWeather.wind.speed}"
+                            app:convertSpeed="@{viewModel.weather.current.windSpeed}"
                             app:layout_constraintEnd_toEndOf="@+id/windImage"
                             app:layout_constraintStart_toStartOf="@+id/windImage"
                             app:layout_constraintTop_toBottomOf="@+id/windImage"
@@ -278,7 +278,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="@{String.format(`%d%%`, viewModel.currentWeather.main.humidity)}"
+                            android:text="@{String.format(`%d%%`, viewModel.weather.current.humidity)}"
                             app:layout_constraintEnd_toEndOf="@+id/humidityImage"
                             app:layout_constraintStart_toStartOf="@+id/humidityImage"
                             app:layout_constraintTop_toBottomOf="@+id/humidityImage"
@@ -298,7 +298,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="@{String.format(`%d hpa`, viewModel.currentWeather.main.pressure)}"
+                            android:text="@{String.format(`%d hpa`, viewModel.weather.current.pressure)}"
                             app:layout_constraintEnd_toEndOf="@+id/pressureImage"
                             app:layout_constraintStart_toStartOf="@+id/pressureImage"
                             app:layout_constraintTop_toBottomOf="@+id/pressureImage"
@@ -318,7 +318,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="@{String.format(`%d%%`, viewModel.currentWeather.clouds.all)}"
+                            android:text="@{String.format(`%d%%`, viewModel.weather.current.clouds)}"
                             app:layout_constraintEnd_toEndOf="@+id/cloudImage"
                             app:layout_constraintStart_toStartOf="@+id/cloudImage"
                             app:layout_constraintTop_toBottomOf="@+id/cloudImage"
@@ -358,7 +358,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:text="@string/next_5_days"
+                    android:text="@string/upcoming_days"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 

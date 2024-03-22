@@ -36,7 +36,7 @@
     <string name="we_can_t_fetch_your_location">We can\'t fetch your location.</string>
     <string name="please_allow_application_to_access_your_location">Please allow application to access your location</string>
     <string name="allow">Allow</string>
-    <string name="next_5_days">Next 5 Days</string>
+    <string name="upcoming_days">Upcoming Days</string>
     <string name="minAndMaxTemp">%1$s/%2$s°</string>
     <string name="units_of_measurements">Units of Measurements</string>
     <string name="imperial">Imperial</string>
@@ -64,5 +64,6 @@
     <string name="kelvin">Kelvin</string>
     <string name="celsius">Celsius</string>
     <string name="fahrenheit">Fahrenheit</string>
+    <string name="unknown_location">Unknown Location</string>
 
 </resources>

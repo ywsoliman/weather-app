@@ -1,5 +1,6 @@
 package com.example.weatherapp.util
 
+import android.location.Geocoder
 import android.os.Build
 import android.widget.ImageView
 import android.widget.TextView
@@ -7,9 +8,12 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.databinding.BindingAdapter
 import com.example.weatherapp.R
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.TextStyle
+import java.util.Date
+import java.util.Locale
 
 @BindingAdapter("url")
 fun loadImage(imageView: ImageView, url: String?) {
@@ -33,20 +37,45 @@ fun loadImage(imageView: ImageView, url: String?) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @BindingAdapter("getTime")
-fun formatTimeToAmPm(textView: TextView, time: String) {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    val dateTime = LocalDateTime.parse(time, formatter)
-    textView.text = dateTime.format(DateTimeFormatter.ofPattern("h a"))
+fun convertEpochToTime(textView: TextView, time: Long) {
+    val date = Date(time * 1000)
+    val formatter = SimpleDateFormat("h a", Locale.ENGLISH)
+    val formattedTime = formatter.format(date)
+    textView.text = formattedTime
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @BindingAdapter("getDay")
-fun convertDateToDay(textView: TextView, time: String) {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    val date = LocalDate.parse(time, formatter)
-    textView.text = date.dayOfWeek.toString().substring(0, 3)
+fun convertDateToDay(textView: TextView, time: Long) {
+    val instant = Instant.ofEpochSecond(time)
+    val localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate()
+    val dayOfWeek = localDate.dayOfWeek
+    textView.text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
+}
+
+@BindingAdapter(value = ["locationLat", "locationLon"], requireAll = true)
+fun getLocation(textView: TextView, lat: Double, lon: Double) {
+
+    val lang = SharedPrefManager.getInstance(textView.context).getLanguage()
+    val geocoder =
+        Geocoder(textView.context, Locale(lang)).getFromLocation(
+            lat,
+            lon,
+            1
+        )
+
+    geocoder?.let {
+        if (it.isNotEmpty()) {
+            val address = it[0]
+            val currentAddress = StringBuilder("")
+            if (!address.subAdminArea.isNullOrBlank()) currentAddress.append(address.subAdminArea + ", ")
+            if (!address.adminArea.isNullOrBlank()) currentAddress.append(address.adminArea + ", ")
+            if (!address.countryName.isNullOrBlank()) currentAddress.append(address.countryName)
+            textView.text = currentAddress
+        } else
+            textView.text = textView.context.getString(R.string.unknown_location)
+    }
 }
 
 @BindingAdapter("convertSpeed")

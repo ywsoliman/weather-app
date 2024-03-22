@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.WeatherDayItemBinding
-import com.example.weatherapp.models.ForecastResponse
+import com.example.weatherapp.models.WeatherResponse
 
 class NextDaysWeatherAdapter :
-    ListAdapter<ForecastResponse.Data, NextDaysWeatherAdapter.NextDaysViewHolder>(NextDaysDiffUtil()) {
+    ListAdapter<WeatherResponse.Daily, NextDaysWeatherAdapter.NextDaysViewHolder>(NextDaysDiffUtil()) {
 
     private lateinit var binding: WeatherDayItemBinding
 
@@ -35,22 +35,21 @@ class NextDaysWeatherAdapter :
     class NextDaysViewHolder(val binding: WeatherDayItemBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class NextDaysDiffUtil : DiffUtil.ItemCallback<ForecastResponse.Data>() {
+    class NextDaysDiffUtil : DiffUtil.ItemCallback<WeatherResponse.Daily>() {
         override fun areItemsTheSame(
-            oldItem: ForecastResponse.Data,
-            newItem: ForecastResponse.Data
+            oldItem: WeatherResponse.Daily,
+            newItem: WeatherResponse.Daily
         ): Boolean {
-            return oldItem.dt_txt == newItem.dt_txt
+            return oldItem.dt == newItem.dt
         }
 
         override fun areContentsTheSame(
-            oldItem: ForecastResponse.Data,
-            newItem: ForecastResponse.Data
+            oldItem: WeatherResponse.Daily,
+            newItem: WeatherResponse.Daily
         ): Boolean {
             return oldItem == newItem
         }
 
     }
-
 
 }

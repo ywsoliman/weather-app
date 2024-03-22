@@ -36,7 +36,7 @@
     <string name="we_can_t_fetch_your_location">لا يمكننا جلب موقعك.</string>
     <string name="please_allow_application_to_access_your_location">يرجى السماح للتطبيق بالوصول إلى موقعك</string>
     <string name="allow">السماح</string>
-    <string name="next_5_days">الخمس ايام القادمة</string>
+    <string name="upcoming_days">الأيام القادمة</string>
     <string name="minAndMaxTemp">%1$s/%2$s°</string>
     <string name="units_of_measurements">وحدات القياس</string>
     <string name="imperial">امبريالي</string>
@@ -64,5 +64,6 @@
     <string name="kelvin">كلڤن</string>
     <string name="celsius">مئوية</string>
     <string name="fahrenheit">فهرنهايت</string>
+    <string name="unknown_location">موقع غير معروف</string>
 
 </resources>

@@ -1,7 +1,9 @@
 package com.example.weatherapp.util
 
+import com.example.weatherapp.models.WeatherResponse
+
 sealed class ApiStatus {
-    data object Success : ApiStatus()
+    class Success(val response: WeatherResponse) : ApiStatus()
     class Failure(val throwable: Throwable) : ApiStatus()
     data object Loading : ApiStatus()
 }

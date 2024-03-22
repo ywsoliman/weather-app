@@ -1,11 +1,17 @@
 package com.example.weatherapp.network
 
-import com.example.weatherapp.models.CurrentWeatherResponse
-import com.example.weatherapp.models.ForecastResponse
+import com.example.weatherapp.models.WeatherResponse
 
 object WeatherCache {
 
-    var currentWeather: CurrentWeatherResponse? = null
-    var currentForecast: ForecastResponse? = null
+    private val cachedWeather = mutableMapOf<String, WeatherResponse>()
+
+    fun getCachedWeather(key: String): WeatherResponse? {
+        return cachedWeather[key]
+    }
+
+    fun cacheWeather(key: String, weatherResponse: WeatherResponse) {
+        cachedWeather[key] = weatherResponse
+    }
 
 }

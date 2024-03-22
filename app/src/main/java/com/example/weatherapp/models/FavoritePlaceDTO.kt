@@ -7,7 +7,7 @@ import java.io.Serializable
 data class FavoritePlaceDTO(
     val longitude: Double,
     val latitude: Double,
-    val countryName: String,
-    val adminArea: String,
-    val subAdminArea: String
-): Serializable
+    val countryName: String?,
+    val adminArea: String?,
+    val subAdminArea: String?
+) : Serializable

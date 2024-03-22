@@ -7,7 +7,7 @@
 
         <variable
             name="currentDay"
-            type="com.example.weatherapp.models.ForecastResponse.Data" />
+            type="com.example.weatherapp.models.WeatherResponse.Daily" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -27,7 +27,7 @@
                 android:id="@+id/nextDaysText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:getDay="@{currentDay.dt_txt}"
+                app:getDay="@{currentDay.dt}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/nextDaysImage"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -64,7 +64,7 @@
                 android:id="@+id/nextDaysTempText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@string/minAndMaxTemp(String.valueOf(Math.round(currentDay.main.temp_max)), String.valueOf(Math.round(currentDay.main.temp_min)))}"
+                android:text="@{@string/minAndMaxTemp(String.valueOf(Math.round(currentDay.Temp.max)), String.valueOf(Math.round(currentDay.Temp.min)))}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
