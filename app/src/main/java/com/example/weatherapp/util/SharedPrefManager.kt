@@ -36,13 +36,13 @@ class SharedPrefManager private constructor(context: Context) {
             .apply()
     }
 
-    fun getCoordinates(): LatLng {
+    fun getCoordinates(): LatLng? {
         val lat = sharedPref.getString(Constants.LATITUDE, "") ?: ""
         val lon = sharedPref.getString(Constants.LONGITUDE, "") ?: ""
         return if (lat.isNotEmpty() && lon.isNotEmpty())
             LatLng(lat.toDouble(), lon.toDouble())
         else
-            LatLng(0.0, 0.0)
+            null
     }
 
     fun setLocationSettings(location: String) {

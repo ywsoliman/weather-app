@@ -38,7 +38,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<ListPreference>("location")
             ?.setOnPreferenceChangeListener { preference, newValue ->
                 if (newValue.equals("gps")) {
-                    if (isLocationEnabled()) {
+                    if (checkPermissions() && isLocationEnabled()) {
                         getFreshLocation()
                     } else {
                         preference.setDefaultValue("Not set")
@@ -59,13 +59,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
     }
 
+    private fun checkPermissions(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     private fun getFreshLocation() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-
             val fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
             fusedClient.requestLocationUpdates(
@@ -84,7 +90,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         fusedClient.removeLocationUpdates(this)
                     }
                 },
-                Looper.myLooper()
+                Looper.getMainLooper()
             )
         }
 

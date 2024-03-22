@@ -70,6 +70,15 @@ class HomeFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        if (checkPermissions()) {
+            if (isLocationEnabled())
+                getFreshLocation()
+            else
+                enableLocationService()
+        } else
+            askForLocation()
+
         return binding.root
     }
 
@@ -89,10 +98,9 @@ class HomeFragment : Fragment() {
             )
         } else {
             val coord = SharedPrefManager.getInstance(requireContext()).getCoordinates()
-            if (coord.latitude != 0.0 && coord.longitude != 0.0)
+            if (coord != null) {
                 homeViewModel.setLocationCoordinates(coord.latitude, coord.longitude)
-            else
-                handleLocation()
+            }
         }
 
         binding.allowBtn.setOnClickListener { askForLocation() }
@@ -226,13 +234,13 @@ class HomeFragment : Fragment() {
                     val latitude = locationResult.lastLocation?.latitude
                     if (latitude != null && longitude != null) {
                         Log.i(TAG, "onLocationResult: $latitude, $longitude")
-                        SharedPrefManager.getInstance(requireContext()).setLocationSettings("gps")
-                        homeViewModel.setLocationCoordinates(latitude, longitude)
+                        SharedPrefManager.getInstance(requireContext())
+                            .setCoordinates(latitude, longitude)
                     }
                     fusedClient.removeLocationUpdates(this)
                 }
             },
-            Looper.myLooper()
+            Looper.getMainLooper()
         )
     }
 
@@ -244,6 +252,7 @@ class HomeFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_LOCATION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                SharedPrefManager.getInstance(requireContext()).setLocationSettings("gps")
                 getFreshLocation()
             } else {
                 homeViewModel.locationDenied()
