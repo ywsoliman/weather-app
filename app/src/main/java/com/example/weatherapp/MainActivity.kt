@@ -1,12 +1,20 @@
 package com.example.weatherapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.weatherapp.cachemanager.CacheWorker
 import com.google.android.material.bottomnavigation.BottomNavigationView
+
+private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,6 +53,22 @@ class MainActivity : AppCompatActivity() {
             navController.popBackStack(R.id.homeFragment, false)
             navController.navigate(fragmentId);
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i(TAG, "onDestroy: ")
+        val workManager = WorkManager.getInstance(this)
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val request = OneTimeWorkRequestBuilder<CacheWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        workManager.enqueue(request)
     }
 
 }

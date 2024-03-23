@@ -86,4 +86,7 @@ dependencies {
 
     // Settings Screen
     implementation("androidx.preference:preference-ktx:1.2.1")
+
+    // Worker
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }

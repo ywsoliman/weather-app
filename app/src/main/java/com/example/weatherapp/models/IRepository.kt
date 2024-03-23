@@ -17,4 +17,5 @@ interface IRepository {
     suspend fun addPlaceToFavorites(place: FavoritePlaceDTO)
     suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>>
     suspend fun deleteFromFavorites(place: FavoritePlaceDTO)
+    suspend fun getMainResponse(): WeatherResponse?
 }

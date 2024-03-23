@@ -1,28 +1,33 @@
 package com.example.weatherapp.home.viewmodel
 
-import android.content.SharedPreferences
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.Repository
 import com.example.weatherapp.models.WeatherResponse
+import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherCache
 import com.example.weatherapp.util.ApiStatus
-import com.example.weatherapp.util.LocationStatus
+import com.example.weatherapp.util.SharedPrefManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Locale
 
+private const val TAG = "HomeViewModel"
+
 @RequiresApi(Build.VERSION_CODES.O)
-class HomeViewModel(private val repo: Repository) : ViewModel() {
-
-    private lateinit var sharedPreferences: SharedPreferences
-
-    private val _locationStatus = MutableStateFlow<LocationStatus>(LocationStatus.Asking)
-    val locationStatus = _locationStatus.asStateFlow()
+class HomeViewModel(
+    private val sharedPrefManager: SharedPrefManager,
+    private val connectivityRepository: ConnectivityRepository,
+    private val repo: Repository
+) :
+    ViewModel() {
 
     private val _apiStatus = MutableStateFlow<ApiStatus>(ApiStatus.Loading)
     val apiStatus = _apiStatus.asStateFlow()
@@ -32,38 +37,87 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
 
     private fun getWeather(latitude: Double, longitude: Double) {
 
-        val lat = latitude.toString()
-        val lon = longitude.toString()
-        val key = "$lat,$lon"
-        val cachedWeather = WeatherCache.getCachedWeather(key)
-        cachedWeather?.let {
-            _weather.value = it
-            _apiStatus.value = ApiStatus.Success(it)
-            return
+        viewModelScope.launch(Dispatchers.IO) {
+            connectivityRepository.isConnected.collectLatest { isOnline ->
+                if (!isOnline) {
+
+                    val response = repo.getMainResponse()
+                    response?.let {
+                        Log.i(TAG, "getWeather: !isOnline")
+                        _weather.value = it
+                        _apiStatus.value = ApiStatus.Success(it)
+                    }
+
+                } else {
+
+                    val lat = latitude.toString()
+                    val lon = longitude.toString()
+                    val key = "$lat,$lon"
+                    val cachedWeather = WeatherCache.getCachedWeather(key)
+                    cachedWeather?.let {
+                        _weather.value = it
+                        _apiStatus.value = ApiStatus.Success(it)
+                        return@collectLatest
+                    }
+
+                    repo.getWeather(
+                        latitude,
+                        longitude,
+                        lang = sharedPrefManager.getLanguage(),
+                        units = convertTemperatureToUnits()
+                    )
+                        .collect {
+                            _weather.value = it
+                            _apiStatus.value = ApiStatus.Success(it)
+                            WeatherCache.cacheWeather(key, it)
+                        }
+
+                }
+            }
         }
 
-        viewModelScope.launch {
-            repo.getWeather(
-                latitude,
-                longitude,
-                lang = sharedPreferences.getString("language", "en"),
-                units = convertTemperatureToUnits()
-            )
-                .collect {
-                    _weather.value = it
-                    _apiStatus.value = ApiStatus.Success(it)
-                    WeatherCache.cacheWeather(key, it)
-                }
-        }
+//        if (!connectivityRepository.isConnected.value) {
+//            viewModelScope.launch(Dispatchers.IO) {
+//                val response = repo.getMainResponse()
+//                response?.let {
+//                    Log.i(TAG, "getWeather: !isOnline")
+//                    _weather.value = it
+//                    _apiStatus.value = ApiStatus.Success(it)
+//                }
+//            }
+//            return
+//        }
+//
+//        val lat = latitude.toString()
+//        val lon = longitude.toString()
+//        val key = "$lat,$lon"
+//        val cachedWeather = WeatherCache.getCachedWeather(key)
+//        cachedWeather?.let {
+//            _weather.value = it
+//            _apiStatus.value = ApiStatus.Success(it)
+//            return
+//        }
+//
+//        viewModelScope.launch {
+//            repo.getWeather(
+//                latitude,
+//                longitude,
+//                lang = sharedPreferences.getString("language", "en"),
+//                units = convertTemperatureToUnits()
+//            )
+//                .collect {
+//                    _weather.value = it
+//                    _apiStatus.value = ApiStatus.Success(it)
+//                    WeatherCache.cacheWeather(key, it)
+//                }
+//        }
     }
 
-    private fun convertTemperatureToUnits() =
-        if (sharedPreferences.getString("temperature", "celsius") == "celsius")
-            "metric"
-        else if (sharedPreferences.getString("temperature", "celsius") == "kelvin")
-            "standard"
-        else
-            "imperial"
+    private fun convertTemperatureToUnits() = when (sharedPrefManager.getTemperatureUnit()) {
+        "celsius" -> "metric"
+        "kelvin" -> "standard"
+        else -> "imperial"
+    }
 
     fun getCurrentDateFormatted(): String {
         val calendar = Calendar.getInstance()
@@ -74,20 +128,8 @@ class HomeViewModel(private val repo: Repository) : ViewModel() {
         return "$dayOfWeek, $dayOfMonth $month"
     }
 
-    private fun locationGranted() {
-        _locationStatus.value = LocationStatus.Granted
-    }
-
     fun setLocationCoordinates(latitude: Double, longitude: Double) {
-        locationGranted()
         getWeather(latitude, longitude)
     }
 
-    fun locationDenied() {
-        _locationStatus.value = LocationStatus.Denied
-    }
-
-    fun setSharedPreferences(sp: SharedPreferences?) {
-        sp?.let { sharedPreferences = it }
-    }
 }

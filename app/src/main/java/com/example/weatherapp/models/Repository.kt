@@ -50,5 +50,9 @@ class Repository private constructor(
         localDataSource.deleteFromFavorites(place)
     }
 
+    override suspend fun getMainResponse(): WeatherResponse? {
+        return localDataSource.getMainResponse()
+    }
+
 
 }

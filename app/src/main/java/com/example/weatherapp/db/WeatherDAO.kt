@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.weatherapp.models.FavoritePlaceDTO
+import com.example.weatherapp.models.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,9 +16,18 @@ interface WeatherDAO {
     fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(geocodingResponseItem: FavoritePlaceDTO)
+    suspend fun insertFavorite(favoritePlace: FavoritePlaceDTO)
 
     @Delete
-    suspend fun delete(geocodingResponseItem: FavoritePlaceDTO)
+    suspend fun delete(favoritePlace: FavoritePlaceDTO)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertMainResponse(response: WeatherResponse)
+
+    @Query("SELECT * FROM main_response")
+    fun getMainResponse(): WeatherResponse?
+
+    @Query("DELETE FROM main_response")
+    suspend fun deleteMainResponse()
 
 }

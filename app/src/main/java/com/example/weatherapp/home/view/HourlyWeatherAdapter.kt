@@ -8,10 +8,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.WeatherTimeItemBinding
+import com.example.weatherapp.models.Hourly
 import com.example.weatherapp.models.WeatherResponse
 
 class HourlyWeatherAdapter :
-    ListAdapter<WeatherResponse.Hourly, HourlyWeatherAdapter.TimeViewHolder>(TimeDiffUtil()) {
+    ListAdapter<Hourly, HourlyWeatherAdapter.TimeViewHolder>(TimeDiffUtil()) {
 
     private lateinit var binding: WeatherTimeItemBinding
 
@@ -32,17 +33,17 @@ class HourlyWeatherAdapter :
     class TimeViewHolder(val binding: WeatherTimeItemBinding) :
         RecyclerView.ViewHolder(binding.root)
 
-    class TimeDiffUtil : ItemCallback<WeatherResponse.Hourly>() {
+    class TimeDiffUtil : ItemCallback<Hourly>() {
         override fun areItemsTheSame(
-            oldItem: WeatherResponse.Hourly,
-            newItem: WeatherResponse.Hourly
+            oldItem: Hourly,
+            newItem: Hourly
         ): Boolean {
             return oldItem.dt == newItem.dt
         }
 
         override fun areContentsTheSame(
-            oldItem: WeatherResponse.Hourly,
-            newItem: WeatherResponse.Hourly
+            oldItem: Hourly,
+            newItem: Hourly
         ): Boolean {
             return oldItem == newItem
         }

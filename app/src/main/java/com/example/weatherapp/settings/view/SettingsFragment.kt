@@ -41,7 +41,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     if (checkPermissions() && isLocationEnabled()) {
                         getFreshLocation()
                     } else {
-                        preference.setDefaultValue("Not set")
+                        preference.setDefaultValue("map")
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle("Location isn't enabled")
                             .setMessage("Please enable location to select one from the map.")

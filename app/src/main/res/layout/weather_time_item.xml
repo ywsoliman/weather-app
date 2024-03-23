@@ -7,7 +7,7 @@
 
         <variable
             name="currentTime"
-            type="com.example.weatherapp.models.WeatherResponse.Hourly" />
+            type="com.example.weatherapp.models.Hourly" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -26,11 +26,11 @@
             android:padding="16dp">
 
             <TextView
-                app:getTime="@{currentTime.dt}"
                 android:id="@+id/timeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/transparent_white"
+                app:getTime="@{currentTime.dt}"
                 tools:text="2 AM" />
 
             <ImageView
@@ -47,8 +47,8 @@
                 android:id="@+id/degreeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
                 android:text="@{@string/temperature(String.valueOf(Math.round(currentTime.temp)))}"
+                android:textSize="18sp"
                 tools:text="13°" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

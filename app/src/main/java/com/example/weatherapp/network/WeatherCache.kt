@@ -14,4 +14,8 @@ object WeatherCache {
         cachedWeather[key] = weatherResponse
     }
 
+    fun getMainResponse(): WeatherResponse {
+        return cachedWeather.values.first()
+    }
+
 }

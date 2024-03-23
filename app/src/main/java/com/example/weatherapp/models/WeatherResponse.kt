@@ -1,68 +1,69 @@
 package com.example.weatherapp.models
 
+import androidx.room.Embedded
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "main_response", primaryKeys = ["lat", "lon"])
 data class WeatherResponse(
-    val lat: Double,
-    val lon: Double,
-    val timezone: String,
-    @SerializedName("timezone_offset")
-    val timezoneOffset: Int,
-    val current: Current,
-    val hourly: List<Hourly>,
-    val daily: List<Daily>
-) {
-    data class Current(
-        val dt: Long,
-        val temp: Double,
-        val pressure: Int,
-        val humidity: Int,
-        val clouds: Int,
-        @SerializedName("wind_speed")
-        val windSpeed: Double,
-        val weather: List<Weather>
-    ) {
-        data class Weather(
-            val id: Int,
-            val main: String,
-            val description: String,
-            val icon: String
-        )
-    }
 
-    data class Hourly(
-        val dt: Long,
-        val temp: Double,
-        val pressure: Int,
-        val humidity: Int,
-        val clouds: Int,
-        @SerializedName("wind_speed")
-        val windSpeed: Double,
-        val weather: List<Weather>,
-    ) {
-        data class Weather(
-            val id: Int,
-            val main: String,
-            val description: String,
-            val icon: String
-        )
-    }
+    @SerializedName("lat") var lat: Double,
+    @SerializedName("lon") var lon: Double,
+    @SerializedName("timezone") var timezone: String? = null,
+    @SerializedName("timezone_offset") var timezoneOffset: Int? = null,
+    @SerializedName("current") @Embedded var current: Current? = Current(),
+    @SerializedName("hourly") var hourly: ArrayList<Hourly> = arrayListOf(),
+    @SerializedName("daily") var daily: ArrayList<Daily> = arrayListOf()
 
-    data class Daily(
-        val dt: Long,
-        val temp: Temp,
-        val weather: List<Weather>,
-    ) {
-        data class Temp(
-            val min: Double,
-            val max: Double,
-        )
+)
 
-        data class Weather(
-            val id: Int,
-            val main: String,
-            val description: String,
-            val icon: String
-        )
-    }
-}
+data class Current(
+
+    @SerializedName("dt") var dt: Int? = null,
+    @SerializedName("temp") var temp: Double? = null,
+    @SerializedName("pressure") var pressure: Int? = null,
+    @SerializedName("humidity") var humidity: Int? = null,
+    @SerializedName("clouds") var clouds: Int? = null,
+    @SerializedName("wind_speed") var windSpeed: Double? = null,
+    @SerializedName("weather") var weather: ArrayList<Weather> = arrayListOf()
+
+)
+
+data class Hourly(
+
+    @SerializedName("dt") var dt: Int? = null,
+    @SerializedName("temp") var temp: Double? = null,
+    @SerializedName("pressure") var pressure: Int? = null,
+    @SerializedName("humidity") var humidity: Int? = null,
+    @SerializedName("clouds") var clouds: Int? = null,
+    @SerializedName("wind_speed") var windSpeed: Double? = null,
+    @SerializedName("weather") var weather: ArrayList<Weather> = arrayListOf(),
+
+    )
+
+data class Temp(
+    @SerializedName("min") var min: Double? = null,
+    @SerializedName("max") var max: Double? = null,
+)
+
+data class Daily(
+
+    @SerializedName("dt") var dt: Int? = null,
+    @SerializedName("summary") var summary: String? = null,
+    @SerializedName("temp") var temp: Temp? = Temp(),
+    @SerializedName("pressure") var pressure: Int? = null,
+    @SerializedName("humidity") var humidity: Int? = null,
+    @SerializedName("wind_speed") var windSpeed: Double? = null,
+    @SerializedName("weather") var weather: ArrayList<Weather> = arrayListOf(),
+    @SerializedName("clouds") var clouds: Int? = null,
+
+    )
+
+data class Weather(
+
+    @SerializedName("id") var id: Int? = null,
+    @SerializedName("main") var main: String? = null,
+    @SerializedName("description") var description: String? = null,
+    @SerializedName("icon") var icon: String? = null
+
+)

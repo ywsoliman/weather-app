@@ -23,16 +23,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
-import androidx.preference.PreferenceManager
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.home.viewmodel.HomeViewModel
 import com.example.weatherapp.home.viewmodel.HomeViewModelFactory
 import com.example.weatherapp.models.Repository
+import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.ApiStatus
-import com.example.weatherapp.util.LocationStatus
 import com.example.weatherapp.util.SharedPrefManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -57,6 +56,8 @@ class HomeFragment : Fragment() {
     private lateinit var nextDaysForecastAdapter: NextDaysWeatherAdapter
     private val homeViewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(
+            SharedPrefManager.getInstance(requireContext()),
+            ConnectivityRepository(requireContext()),
             Repository.getInstance(
                 WeatherLocalDataSource.getInstance(requireContext()),
                 WeatherRemoteDataSource
@@ -71,13 +72,15 @@ class HomeFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        if (checkPermissions()) {
-            if (isLocationEnabled())
-                getFreshLocation()
-            else
-                enableLocationService()
-        } else
-            askForLocation()
+        if (SharedPrefManager.getInstance(requireContext()).getCoordinates() == null) {
+            if (checkPermissions()) {
+                if (isLocationEnabled())
+                    getFreshLocation()
+                else
+                    enableLocationService()
+            } else
+                askForLocation()
+        }
 
         return binding.root
     }
@@ -85,8 +88,6 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        loadSettings()
 
         val args: HomeFragmentArgs by navArgs()
         val selectedFavoritePlace = args.favoritePlace
@@ -111,44 +112,6 @@ class HomeFragment : Fragment() {
         binding.nextDaysAdapter = nextDaysForecastAdapter
         binding.lifecycleOwner = this
 
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.locationStatus.collectLatest { locationStatus ->
-                    when (locationStatus) {
-                        is LocationStatus.Granted -> {
-                            handleLocationGranted()
-                            Log.i(TAG, "locationStatus: $locationStatus")
-                        }
-
-                        is LocationStatus.Denied -> {
-                            binding.weatherDetails.visibility = View.GONE
-                            binding.allowLocationCard.visibility = View.VISIBLE
-                            Log.i(TAG, "locationStatus: $locationStatus")
-                        }
-
-                        is LocationStatus.Asking -> {
-                            binding.weatherDetails.visibility = View.GONE
-                            binding.allowLocationCard.visibility = View.GONE
-                            Log.i(TAG, "locationStatus: $locationStatus")
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun handleLocation() {
-        if (checkPermissions()) {
-            if (isLocationEnabled())
-                getFreshLocation()
-            else
-                enableLocationService()
-        } else
-            askForLocation()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun handleLocationGranted() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeViewModel.apiStatus.collectLatest { apiStatus ->
@@ -186,11 +149,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
 
-    private fun loadSettings() {
-        val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        homeViewModel.setSharedPreferences(sp)
     }
 
     private fun enableLocationService() {
@@ -236,6 +195,7 @@ class HomeFragment : Fragment() {
                         Log.i(TAG, "onLocationResult: $latitude, $longitude")
                         SharedPrefManager.getInstance(requireContext())
                             .setCoordinates(latitude, longitude)
+                        homeViewModel.setLocationCoordinates(latitude, longitude)
                     }
                     fusedClient.removeLocationUpdates(this)
                 }
@@ -255,7 +215,9 @@ class HomeFragment : Fragment() {
                 SharedPrefManager.getInstance(requireContext()).setLocationSettings("gps")
                 getFreshLocation()
             } else {
-                homeViewModel.locationDenied()
+                SharedPrefManager.getInstance(requireContext()).setCoordinates(0.0, 0.0)
+                binding.weatherDetails.visibility = View.GONE
+                binding.allowLocationCard.visibility = View.VISIBLE
             }
         }
     }

@@ -7,7 +7,7 @@
 
         <variable
             name="currentDay"
-            type="com.example.weatherapp.models.WeatherResponse.Daily" />
+            type="com.example.weatherapp.models.Daily" />
     </data>
 
     <androidx.cardview.widget.CardView

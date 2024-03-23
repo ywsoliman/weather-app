@@ -2,6 +2,7 @@ package com.example.weatherapp.db
 
 import android.content.Context
 import com.example.weatherapp.models.FavoritePlaceDTO
+import com.example.weatherapp.models.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 
 class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
@@ -26,7 +27,7 @@ class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
     }
 
     override suspend fun addPlaceToFavorite(place: FavoritePlaceDTO) {
-        dao.insert(place)
+        dao.insertFavorite(place)
     }
 
     override suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
@@ -35,6 +36,10 @@ class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
 
     override suspend fun deleteFromFavorites(place: FavoritePlaceDTO) {
         dao.delete(place)
+    }
+
+    override suspend fun getMainResponse(): WeatherResponse? {
+        return dao.getMainResponse()
     }
 
 }
