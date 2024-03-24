@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.WeatherResponse
 import kotlinx.coroutines.flow.Flow
@@ -29,5 +30,14 @@ interface WeatherDAO {
 
     @Query("DELETE FROM main_response")
     suspend fun deleteMainResponse()
+
+    @Query("SELECT * FROM alarm_alerts")
+    fun getAlarmAlerts(): Flow<List<AlarmItem>>
+
+    @Delete
+    suspend fun deleteAlarmAlert(alarm: AlarmItem)
+
+    @Insert
+    suspend fun insertAlarmAlert(alarm: AlarmItem)
 
 }

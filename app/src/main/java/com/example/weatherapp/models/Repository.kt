@@ -54,5 +54,17 @@ class Repository private constructor(
         return localDataSource.getMainResponse()
     }
 
+    override suspend fun getAlarmAlerts(): Flow<List<AlarmItem>> {
+        return localDataSource.getAlarmAlerts()
+    }
+
+    override suspend fun deleteFromAlerts(alarm: AlarmItem) {
+        localDataSource.deleteFromAlerts(alarm)
+    }
+
+    override suspend fun insertAlarmAlert(alarm: AlarmItem) {
+        localDataSource.insertAlarmAlert(alarm)
+    }
+
 
 }

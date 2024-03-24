@@ -44,7 +44,7 @@ class WeatherDaoTest {
             "Giza",
             "Faisal"
         )
-        dao.insert(favoritePlace)
+        dao.insertFavorite(favoritePlace)
         val allFavoritePlaces = dao.getFavoritePlaces().first()
         assertThat(allFavoritePlaces).contains(favoritePlace)
     }
@@ -58,7 +58,7 @@ class WeatherDaoTest {
             "Giza",
             "Faisal"
         )
-        dao.insert(favoritePlace)
+        dao.insertFavorite(favoritePlace)
         dao.delete(favoritePlace)
         val allFavoritePlaces = dao.getFavoritePlaces().first()
         assertThat(allFavoritePlaces).doesNotContain(favoritePlace)

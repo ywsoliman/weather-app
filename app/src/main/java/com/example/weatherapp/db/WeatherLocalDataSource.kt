@@ -1,6 +1,7 @@
 package com.example.weatherapp.db
 
 import android.content.Context
+import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.WeatherResponse
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +41,18 @@ class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
 
     override suspend fun getMainResponse(): WeatherResponse? {
         return dao.getMainResponse()
+    }
+
+    override suspend fun getAlarmAlerts(): Flow<List<AlarmItem>> {
+        return dao.getAlarmAlerts()
+    }
+
+    override suspend fun deleteFromAlerts(alarm: AlarmItem) {
+        return dao.deleteAlarmAlert(alarm)
+    }
+
+    override suspend fun insertAlarmAlert(alarm: AlarmItem) {
+        return dao.insertAlarmAlert(alarm)
     }
 
 }

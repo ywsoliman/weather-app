@@ -6,6 +6,8 @@ import com.example.weatherapp.models.Hourly
 import com.example.weatherapp.models.Weather
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class Converters {
@@ -62,6 +64,18 @@ class Converters {
         } else {
             Gson().toJson(list)
         }
+    }
+
+    @TypeConverter
+    fun toLocalDateTime(value: String?): LocalDateTime? {
+        return value?.let {
+            return LocalDateTime.parse(it, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        }
+    }
+
+    @TypeConverter
+    fun fromLocalDateTime(date: LocalDateTime?): String? {
+        return date?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     }
 
 }

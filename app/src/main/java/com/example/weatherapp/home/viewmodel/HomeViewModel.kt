@@ -1,8 +1,6 @@
 package com.example.weatherapp.home.viewmodel
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.Repository
@@ -21,7 +19,6 @@ import java.util.Locale
 
 private const val TAG = "HomeViewModel"
 
-@RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(
     private val sharedPrefManager: SharedPrefManager,
     private val connectivityRepository: ConnectivityRepository,
@@ -64,7 +61,7 @@ class HomeViewModel(
                         latitude,
                         longitude,
                         lang = sharedPrefManager.getLanguage(),
-                        units = convertTemperatureToUnits()
+                        units = sharedPrefManager.convertTemperatureToUnits()
                     )
                         .collect {
                             _weather.value = it
@@ -111,12 +108,6 @@ class HomeViewModel(
 //                    WeatherCache.cacheWeather(key, it)
 //                }
 //        }
-    }
-
-    private fun convertTemperatureToUnits() = when (sharedPrefManager.getTemperatureUnit()) {
-        "celsius" -> "metric"
-        "kelvin" -> "standard"
-        else -> "imperial"
     }
 
     fun getCurrentDateFormatted(): String {

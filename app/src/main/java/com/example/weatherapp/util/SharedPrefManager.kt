@@ -64,4 +64,10 @@ class SharedPrefManager private constructor(context: Context) {
         return settingsPref.getString("wind", "m/s") ?: "m/s"
     }
 
+    fun convertTemperatureToUnits() = when (getTemperatureUnit()) {
+        "celsius" -> "metric"
+        "kelvin" -> "standard"
+        else -> "imperial"
+    }
+
 }

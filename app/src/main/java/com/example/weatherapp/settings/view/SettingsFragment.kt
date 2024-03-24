@@ -45,7 +45,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         MaterialAlertDialogBuilder(requireContext())
                             .setTitle("Location isn't enabled")
                             .setMessage("Please enable location to select one from the map.")
-                            .setNeutralButton(resources.getString(R.string.cancel)) { dialog, _ ->
+                            .setNeutralButton(activity?.getString(R.string.cancel)) { dialog, _ ->
                                 dialog.dismiss()
                             }
                             .show()

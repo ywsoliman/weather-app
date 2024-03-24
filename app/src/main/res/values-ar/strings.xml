@@ -65,5 +65,12 @@
     <string name="celsius">مئوية</string>
     <string name="fahrenheit">فهرنهايت</string>
     <string name="unknown_location">موقع غير معروف</string>
+    <string name="can_t_add_to_favorite_while_internet_is_not_available">لا يمكن إضافة إلى المفضلة في حالة عدم توفر الإنترنت</string>
+    <string name="delete_selected_alert">هل تريد حذف التنبيه المحدد؟</string>
+    <string name="selected_alert_will_be_permanently_removed_and_you_won_t_get_notified_of_the_weather_details_at_that_time">سيتم إزالة التنبيه المحدد نهائياً، ولن تتلقى إشعارات بتفاصيل الطقس في ذلك الوقت.</string>
+    <string name="select_date">اختر التاريخ:</string>
+    <string name="press_to_select_a_date">اضغط لتحديد التاريخ</string>
+    <string name="select_time">اختر الوقت:</string>
+    <string name="press_to_select_a_time">اضغط لتحديد الوقت</string>
 
 </resources>

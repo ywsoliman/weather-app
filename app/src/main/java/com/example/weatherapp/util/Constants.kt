@@ -1,6 +1,7 @@
 package com.example.weatherapp.util
 
 object Constants {
+    const val ALARM_ITEM = "alarm_item"
     const val API_KEY = "772fa8bd6198928ac03830e013dffeef"
     const val LATITUDE = "latitude"
     const val LONGITUDE = "longitude"

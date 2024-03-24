@@ -65,5 +65,12 @@
     <string name="celsius">Celsius</string>
     <string name="fahrenheit">Fahrenheit</string>
     <string name="unknown_location">Unknown Location</string>
+    <string name="can_t_add_to_favorite_while_internet_is_not_available">Can\'t add to favorite while internet is not available</string>
+    <string name="delete_selected_alert">Delete selected alert?</string>
+    <string name="selected_alert_will_be_permanently_removed_and_you_won_t_get_notified_of_the_weather_details_at_that_time">Selected alert will be permanently removed and you won\'t get notified of the weather details at that time.</string>
+    <string name="select_date">Select Date:</string>
+    <string name="press_to_select_a_date">Press to select a date</string>
+    <string name="select_time">Select Time:</string>
+    <string name="press_to_select_a_time">Press to select a time</string>
 
 </resources>

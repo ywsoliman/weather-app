@@ -19,13 +19,17 @@ import com.example.weatherapp.favorite.viewmodel.FavoriteViewModel
 import com.example.weatherapp.map.view.Mode
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.Repository
+import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
 
     private lateinit var binding: FragmentFavoritesBinding
+    private lateinit var connectivityRepository: ConnectivityRepository
     private lateinit var favoriteAdapter: FavoritesAdapter
     private val favoriteViewModel: FavoriteViewModel by viewModels {
         FavoriteViewModelFactory(
@@ -42,6 +46,7 @@ class FavoritesFragment : Fragment() {
     ): View {
         binding =
             DataBindingUtil.inflate(layoutInflater, R.layout.fragment_favorites, container, false)
+        connectivityRepository = ConnectivityRepository(requireContext())
         return binding.root
     }
 
@@ -57,11 +62,32 @@ class FavoritesFragment : Fragment() {
 
         binding.adapter = favoriteAdapter
 
+
         binding.favoriteFAB.setOnClickListener {
-            val action =
-                FavoritesFragmentDirections.actionFavoritesFragmentToMapFragment(Mode.ADD_LOCATION)
-            it.findNavController().navigate(action)
+            lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    connectivityRepository.isConnected.collectLatest { isOnline ->
+                        if (isOnline) {
+                            val action =
+                                FavoritesFragmentDirections.actionFavoritesFragmentToMapFragment(
+                                    Mode.ADD_LOCATION
+                                )
+                            view.findNavController().navigate(action)
+                        } else {
+                            Snackbar.make(
+                                requireView(),
+                                getString(R.string.can_t_add_to_favorite_while_internet_is_not_available),
+                                Snackbar.LENGTH_SHORT
+                            )
+                                .setAnchorView(R.id.bottomNavigationView)
+                                .show()
+                        }
+                    }
+                }
+            }
+            
         }
+
 
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

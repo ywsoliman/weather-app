@@ -5,11 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.WeatherResponse
 import com.example.weatherapp.util.Converters
 
-@Database(entities = [FavoritePlaceDTO::class, WeatherResponse::class], version = 1)
+@Database(
+    entities = [FavoritePlaceDTO::class, WeatherResponse::class, AlarmItem::class],
+    version = 1
+)
 @TypeConverters(Converters::class)
 abstract class WeatherDatabase : RoomDatabase() {
 
