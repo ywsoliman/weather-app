@@ -17,6 +17,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.favorite.viewmodel.FavoriteViewModel
+import com.example.weatherapp.favorite.viewmodel.FavoriteViewModelFactory
 import com.example.weatherapp.map.view.Mode
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.Repository
@@ -68,7 +69,6 @@ class FavoritesFragment : Fragment() {
 
         binding.adapter = favoriteAdapter
 
-
         binding.favoriteFAB.setOnClickListener {
             lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -91,7 +91,7 @@ class FavoritesFragment : Fragment() {
                     }
                 }
             }
-            
+
         }
 
 
