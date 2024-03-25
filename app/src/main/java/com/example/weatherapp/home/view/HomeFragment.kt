@@ -47,7 +47,6 @@ private const val TAG = "HomeFragment"
 
 private const val REQUEST_LOCATION_CODE = 2005
 
-@RequiresApi(Build.VERSION_CODES.O)
 class HomeFragment : Fragment() {
 
     private lateinit var fusedClient: FusedLocationProviderClient
@@ -85,7 +84,6 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

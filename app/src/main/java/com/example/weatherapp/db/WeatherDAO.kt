@@ -26,7 +26,7 @@ interface WeatherDAO {
     suspend fun insertMainResponse(response: WeatherResponse)
 
     @Query("SELECT * FROM main_response")
-    fun getMainResponse(): WeatherResponse?
+    fun getMainResponse(): Flow<WeatherResponse?>
 
     @Query("DELETE FROM main_response")
     suspend fun deleteMainResponse()

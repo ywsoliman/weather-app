@@ -38,11 +38,13 @@ class HomeViewModel(
             connectivityRepository.isConnected.collectLatest { isOnline ->
                 if (!isOnline) {
 
-                    val response = repo.getMainResponse()
-                    response?.let {
-                        Log.i(TAG, "getWeather: !isOnline")
-                        _weather.value = it
-                        _apiStatus.value = ApiStatus.Success(it)
+                    Log.i(TAG, "getWeather: !isOnline")
+                    repo.getMainResponse().collectLatest {
+                        it?.let {
+                            Log.i(TAG, "getWeather: response = $it")
+                            _weather.value = it
+                            _apiStatus.value = ApiStatus.Success(it)
+                        }
                     }
 
                 } else {

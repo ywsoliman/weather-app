@@ -39,7 +39,7 @@ class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
         dao.delete(place)
     }
 
-    override suspend fun getMainResponse(): WeatherResponse? {
+    override suspend fun getMainResponse(): Flow<WeatherResponse?> {
         return dao.getMainResponse()
     }
 
