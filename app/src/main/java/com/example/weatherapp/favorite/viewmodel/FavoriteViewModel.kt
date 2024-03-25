@@ -25,7 +25,6 @@ class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repo.getFavoritePlaces()
                 .collect {
-                    Log.i(TAG, "getFavoritePlaces: places = $it")
                     _favoritePlaces.value = it
                 }
         }
@@ -35,6 +34,12 @@ class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repo.deleteFromFavorites(place)
             getFavoritePlaces()
+        }
+    }
+
+    fun addPlaceToFavorites(favoritePlace: FavoritePlaceDTO) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.addPlaceToFavorites(favoritePlace)
         }
     }
 

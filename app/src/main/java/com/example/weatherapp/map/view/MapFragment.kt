@@ -8,18 +8,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentMapBinding
-import com.example.weatherapp.db.WeatherLocalDataSource
-import com.example.weatherapp.map.viewmodel.MapViewModel
-import com.example.weatherapp.map.viewmodel.MapViewModelFactory
 import com.example.weatherapp.models.FavoritePlaceDTO
-import com.example.weatherapp.models.Repository
-import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.Constants
 import com.example.weatherapp.util.SharedPrefManager
 import com.google.android.gms.common.api.Status
@@ -31,7 +25,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import java.util.Locale
@@ -42,14 +35,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var googleMap: GoogleMap
     private lateinit var autoCompleteFragment: AutocompleteSupportFragment
     private var coordinates: LatLng? = null
-    private val mapViewModel: MapViewModel by viewModels {
-        MapViewModelFactory(
-            Repository.getInstance(
-                WeatherLocalDataSource.getInstance(requireContext()),
-                WeatherRemoteDataSource
-            )
-        )
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -135,10 +120,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                             adminArea = address.adminArea,
                             subAdminArea = address.subAdminArea
                         )
-                        mapViewModel.addPlaceToFavorites(favoritePlace)
+                        val action =
+                            MapFragmentDirections.actionMapFragmentToFavoritesFragment(favoritePlace)
+                        view.findNavController().navigate(action)
                     }
-                    view.findNavController().navigate(R.id.action_mapFragment_to_favoritesFragment)
-
                 }
             }
         }

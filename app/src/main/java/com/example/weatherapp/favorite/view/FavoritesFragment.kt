@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
@@ -52,6 +53,11 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val args: FavoritesFragmentArgs by navArgs()
+        args.favoritePlace?.let {
+            favoriteViewModel.addPlaceToFavorites(it)
+        }
 
         favoriteAdapter = FavoritesAdapter({
             val action = FavoritesFragmentDirections.actionFavoritesFragmentToHomeFragment(it)
