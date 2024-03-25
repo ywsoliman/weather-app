@@ -72,5 +72,7 @@
     <string name="press_to_select_a_date">Press to select a date</string>
     <string name="select_time">Select Time:</string>
     <string name="press_to_select_a_time">Press to select a time</string>
+    <string name="you_have_lost_connection_to_the_internet_nthis_app_is_offline">You have lost connection to the internet\nThis app is offline.</string>
+    <string name="internet_not_connected_icon">Internet not connected icon</string>
 
 </resources>

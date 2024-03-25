@@ -72,5 +72,6 @@
     <string name="press_to_select_a_date">اضغط لتحديد التاريخ</string>
     <string name="select_time">اختر الوقت:</string>
     <string name="press_to_select_a_time">اضغط لتحديد الوقت</string>
+    <string name="you_have_lost_connection_to_the_internet_nthis_app_is_offline">لقد فقدت الاتصال بالإنترنت\nهذا التطبيق غير متصل.</string>
 
 </resources>

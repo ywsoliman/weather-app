@@ -1,6 +1,5 @@
 package com.example.weatherapp.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.Repository
@@ -21,7 +20,7 @@ private const val TAG = "HomeViewModel"
 
 class HomeViewModel(
     private val sharedPrefManager: SharedPrefManager,
-    private val connectivityRepository: ConnectivityRepository,
+    connectivityRepository: ConnectivityRepository,
     private val repo: Repository
 ) :
     ViewModel() {
@@ -32,16 +31,17 @@ class HomeViewModel(
     private val _weather = MutableStateFlow<WeatherResponse?>(null)
     val weather = _weather.asStateFlow()
 
+    val isConnected = connectivityRepository.isConnected
+
     private fun getWeather(latitude: Double, longitude: Double) {
 
         viewModelScope.launch(Dispatchers.IO) {
-            connectivityRepository.isConnected.collectLatest { isOnline ->
+            isConnected.collectLatest { isOnline ->
+
                 if (!isOnline) {
 
-                    Log.i(TAG, "getWeather: !isOnline")
                     repo.getMainResponse().collectLatest {
                         it?.let {
-                            Log.i(TAG, "getWeather: response = $it")
                             _weather.value = it
                             _apiStatus.value = ApiStatus.Success(it)
                         }
@@ -74,42 +74,6 @@ class HomeViewModel(
                 }
             }
         }
-
-//        if (!connectivityRepository.isConnected.value) {
-//            viewModelScope.launch(Dispatchers.IO) {
-//                val response = repo.getMainResponse()
-//                response?.let {
-//                    Log.i(TAG, "getWeather: !isOnline")
-//                    _weather.value = it
-//                    _apiStatus.value = ApiStatus.Success(it)
-//                }
-//            }
-//            return
-//        }
-//
-//        val lat = latitude.toString()
-//        val lon = longitude.toString()
-//        val key = "$lat,$lon"
-//        val cachedWeather = WeatherCache.getCachedWeather(key)
-//        cachedWeather?.let {
-//            _weather.value = it
-//            _apiStatus.value = ApiStatus.Success(it)
-//            return
-//        }
-//
-//        viewModelScope.launch {
-//            repo.getWeather(
-//                latitude,
-//                longitude,
-//                lang = sharedPreferences.getString("language", "en"),
-//                units = convertTemperatureToUnits()
-//            )
-//                .collect {
-//                    _weather.value = it
-//                    _apiStatus.value = ApiStatus.Success(it)
-//                    WeatherCache.cacheWeather(key, it)
-//                }
-//        }
     }
 
     fun getCurrentDateFormatted(): String {
