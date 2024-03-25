@@ -10,4 +10,14 @@ data class FavoritePlaceDTO(
     val countryName: String?,
     val adminArea: String?,
     val subAdminArea: String?
-) : Serializable
+) : Serializable {
+
+    override fun toString(): String {
+        val placeString = StringBuilder()
+        subAdminArea?.let { placeString.append(it).append(", ") }
+        adminArea?.let { placeString.append(it).append(", ") }
+        countryName?.let { placeString.append(it) }
+        return placeString.toString()
+    }
+
+}

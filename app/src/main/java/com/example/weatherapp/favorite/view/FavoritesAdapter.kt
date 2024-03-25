@@ -28,8 +28,7 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         val current = getItem(position)
-        val placeString  = "${current.subAdminArea}, ${current.adminArea}, ${current.countryName}"
-        holder.placeName.text = placeString
+        holder.placeName.text = current.toString()
     }
 
     inner class FavoritesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
