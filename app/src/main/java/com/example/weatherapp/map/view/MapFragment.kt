@@ -1,6 +1,5 @@
 package com.example.weatherapp.map.view
 
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,14 +7,17 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentMapBinding
-import com.example.weatherapp.models.FavoritePlaceDTO
+import com.example.weatherapp.map.viewmodel.MapViewModel
+import com.example.weatherapp.map.viewmodel.NavigationEvent
 import com.example.weatherapp.util.Constants
-import com.example.weatherapp.util.SharedPrefManager
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -27,13 +29,16 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import java.util.Locale
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapBinding
     private lateinit var googleMap: GoogleMap
     private lateinit var autoCompleteFragment: AutocompleteSupportFragment
+    private val mapViewModel: MapViewModel by viewModels()
     private var coordinates: LatLng? = null
 
     override fun onCreateView(
@@ -94,39 +99,43 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         })
 
         binding.saveBtn.setOnClickListener {
-
             coordinates?.let {
+                mapViewModel.handleSavingLocation(mode, requireContext(), it.latitude, it.longitude)
+            }
+        }
 
-                if (mode == Mode.CHANGE_LOCATION) {
-                    SharedPrefManager.getInstance(requireContext())
-                        .setCoordinates(it.latitude, it.longitude)
-                    findNavController().navigate(R.id.action_mapFragment_to_settingsFragment)
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mapViewModel.navigationEvent.collectLatest { event ->
+                    when (event) {
+                        is NavigationEvent.AddLocation -> {
+                            val action =
+                                MapFragmentDirections.actionMapFragmentToFavoritesFragment(event.favoritePlaceDTO)
+                            findNavController().navigate(action)
+                        }
 
-                } else if (mode == Mode.ADD_LOCATION) {
-
-                    val lang = SharedPrefManager.getInstance(requireContext()).getLanguage()
-                    val geocoder =
-                        Geocoder(requireContext(), Locale(lang)).getFromLocation(
-                            it.latitude,
-                            it.longitude,
-                            1
-                        )?.get(0)
-
-                    geocoder?.let { address ->
-                        val favoritePlace = FavoritePlaceDTO(
-                            longitude = address.longitude,
-                            latitude = address.latitude,
-                            countryName = address.countryName,
-                            adminArea = address.adminArea,
-                            subAdminArea = address.subAdminArea
-                        )
-                        val action =
-                            MapFragmentDirections.actionMapFragmentToFavoritesFragment(favoritePlace)
-                        view.findNavController().navigate(action)
+                        is NavigationEvent.ChangeLocation -> {
+                            findNavController().navigate(R.id.action_mapFragment_to_settingsFragment)
+                        }
                     }
                 }
             }
         }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mapViewModel.showSnackbarEvent.collectLatest {
+                    Snackbar.make(
+                        requireView(),
+                        "Couldn't find address for the marked point. Please choose another one.",
+                        Snackbar.LENGTH_SHORT
+                    )
+                        .setAnchorView(R.id.savePlaceLayout)
+                        .show()
+                }
+            }
+        }
+
 
     }
 
