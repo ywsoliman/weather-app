@@ -34,16 +34,24 @@ class AlarmReceiver : BroadcastReceiver() {
         val currentAlarmItem =
             intent?.getSerializableExtra(Constants.ALARM_ITEM, AlarmItem::class.java)
 
-        context?.let {
+        context?.let { myContext ->
 
             repo = Repository.getInstance(
-                WeatherLocalDataSource(it),
+                WeatherLocalDataSource(myContext),
                 WeatherRemoteDataSource
             )
 
-            sharedPrefManager = SharedPrefManager.getInstance(it)
+            sharedPrefManager = SharedPrefManager.getInstance(myContext)
 
             CoroutineScope(Dispatchers.IO).launch {
+
+                currentAlarmItem?.let { repo.deleteFromAlerts(it) }
+
+                val notificationManager =
+                    myContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                if (!notificationManager.areNotificationsEnabled())
+                    return@launch
 
                 val currentResponse = repo.getWeather(
                     sharedPrefManager.getCoordinates()?.latitude!!,
@@ -56,7 +64,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 currentResponse.collectLatest { response ->
 
                     val customSoundUri =
-                        Uri.parse("android.resource://" + it.packageName + "/raw/notification_sound")
+                        Uri.parse("android.resource://" + myContext.packageName + "/raw/notification_sound")
 
                     val builder = NotificationCompat.Builder(context, CHANNEL_ID)
                         .setSmallIcon(R.drawable.cloudy)
@@ -67,8 +75,6 @@ class AlarmReceiver : BroadcastReceiver() {
                         .setDefaults(NotificationCompat.DEFAULT_ALL)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
 
-                    val notificationManager =
-                        it.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                     val channel = NotificationChannel(
                         CHANNEL_ID,
                         "Weather Alerts",
@@ -77,10 +83,6 @@ class AlarmReceiver : BroadcastReceiver() {
                     channel.description = "This channel is specialized in receiving weather alerts."
                     notificationManager.createNotificationChannel(channel)
                     notificationManager.notify(1, builder.build())
-
-                    currentAlarmItem?.let {
-                        repo.deleteFromAlerts(it)
-                    }
 
                 }
 

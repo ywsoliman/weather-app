@@ -50,17 +50,4 @@
 
     </PreferenceCategory>
 
-
-    <PreferenceCategory
-        app:icon="@drawable/ic_notifications"
-        app:title="@string/notifications">
-
-        <SwitchPreferenceCompat
-            app:key="notifications"
-            app:summaryOff="@string/notifications_summary_off"
-            app:summaryOn="@string/notifications_summary_on"
-            app:title="@string/disable_notifications" />
-
-    </PreferenceCategory>
-
 </PreferenceScreen>
