@@ -13,6 +13,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.Repository
+import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.Constants
 import com.example.weatherapp.util.SharedPrefManager
@@ -50,7 +51,9 @@ class AlarmReceiver : BroadcastReceiver() {
                 val notificationManager =
                     myContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-                if (!notificationManager.areNotificationsEnabled())
+                if (!notificationManager.areNotificationsEnabled() ||
+                    !ConnectivityRepository(myContext).isConnected.value
+                )
                     return@launch
 
                 val currentResponse = repo.getWeather(
