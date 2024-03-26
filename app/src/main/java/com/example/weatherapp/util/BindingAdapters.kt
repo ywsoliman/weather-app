@@ -1,17 +1,11 @@
 package com.example.weatherapp.util
 
 import android.location.Geocoder
-import android.os.Build
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.annotation.RequiresApi
 import androidx.databinding.BindingAdapter
 import com.example.weatherapp.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -51,13 +45,13 @@ fun convertEpochToTime(textView: TextView, time: Long) {
     textView.text = formattedTime
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @BindingAdapter("getDay")
 fun convertDateToDay(textView: TextView, time: Long) {
+    val locale = Locale(SharedPrefManager.getInstance(textView.context).getLanguage())
     val instant = Instant.ofEpochSecond(time)
     val localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate()
     val dayOfWeek = localDate.dayOfWeek
-    textView.text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
+    textView.text = dayOfWeek.getDisplayName(TextStyle.SHORT, locale)
 }
 
 @BindingAdapter("getDateAndTime")
@@ -69,33 +63,24 @@ fun convertLocalDateTimeToString(textView: TextView, time: LocalDateTime) {
 @BindingAdapter(value = ["locationLat", "locationLon"], requireAll = true)
 fun getLocation(textView: TextView, lat: Double, lon: Double) {
 
-    if (lat == 0.0 && lon == 0.0)
-        return
-
-    val lang = SharedPrefManager.getInstance(textView.context).getLanguage()
-    CoroutineScope(Dispatchers.IO).launch {
-        try {
-            val geocoder = Geocoder(textView.context, Locale(lang))
-            val addresses = geocoder.getFromLocation(lat, lon, 1)
-            withContext(Dispatchers.Main) {
-                if (!addresses.isNullOrEmpty()) {
-                    val address = addresses[0]
-                    val currentAddress = StringBuilder("")
-                    if (!address.subAdminArea.isNullOrBlank()) currentAddress.append(address.subAdminArea + ", ")
-                    if (!address.adminArea.isNullOrBlank()) currentAddress.append(address.adminArea + ", ")
-                    if (!address.countryName.isNullOrBlank()) currentAddress.append(address.countryName)
-                    textView.text = currentAddress
-                } else {
-                    textView.text = textView.context.getString(R.string.unknown_location)
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            withContext(Dispatchers.Main) {
-                textView.text = textView.context.getString(R.string.unknown_location)
-            }
+    try {
+        val lang = SharedPrefManager.getInstance(textView.context).getLanguage()
+        val geocoder = Geocoder(textView.context, Locale(lang))
+        val addresses = geocoder.getFromLocation(lat, lon, 1)
+        if (!addresses.isNullOrEmpty()) {
+            val address = addresses[0]
+            val currentAddress = StringBuilder("")
+            if (!address.subAdminArea.isNullOrBlank()) currentAddress.append(address.subAdminArea + ", ")
+            if (!address.adminArea.isNullOrBlank()) currentAddress.append(address.adminArea + ", ")
+            if (!address.countryName.isNullOrBlank()) currentAddress.append(address.countryName)
+            textView.text = currentAddress
+        } else {
+            textView.text = textView.context.getString(R.string.unknown_location)
         }
+    } catch (e: IOException) {
+        e.printStackTrace()
     }
+
 }
 
 @BindingAdapter("convertSpeed")
