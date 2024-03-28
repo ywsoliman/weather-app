@@ -5,10 +5,10 @@
       <entry key="WeatherDaoTest">
         <State />
       </entry>
-      <entry key="WeatherLocalDataSourceTest">
+      <entry key="app">
         <State />
       </entry>
-      <entry key="app">
+      <entry key="getMainResponse()">
         <State />
       </entry>
     </value>

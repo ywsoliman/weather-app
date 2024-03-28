@@ -24,6 +24,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.github.matteobattilana.weather.WeatherView
+            android:id="@+id/weatherAnimation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/noInternetBanner"
             android:layout_width="match_parent"

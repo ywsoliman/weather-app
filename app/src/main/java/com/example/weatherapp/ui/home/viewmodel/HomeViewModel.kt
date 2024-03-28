@@ -1,14 +1,14 @@
 package com.example.weatherapp.ui.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.models.WeatherResponse
 import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherCache
+import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.util.ApiStatus
 import com.example.weatherapp.util.SharedPrefManager
+import com.github.matteobattilana.weather.PrecipType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Locale
-
-private const val TAG = "HomeViewModel"
 
 class HomeViewModel(
     private val sharedPrefManager: SharedPrefManager,
@@ -32,6 +30,9 @@ class HomeViewModel(
     private val _weather = MutableStateFlow<WeatherResponse?>(null)
     val weather = _weather.asStateFlow()
 
+    private val _weatherState = MutableStateFlow(PrecipType.CLEAR)
+    val weatherState = _weatherState.asStateFlow()
+
     val isConnected = connectivityRepository.isConnected
 
     fun setLocationCoordinates(latitude: Double, longitude: Double, isMainResponse: Boolean) {
@@ -40,14 +41,7 @@ class HomeViewModel(
             isConnected.collectLatest { isOnline ->
 
                 if (!isOnline) {
-
-                    repo.getMainResponse().collectLatest {
-                        it?.let {
-                            _weather.value = it
-                            _apiStatus.value = ApiStatus.Success(it)
-                        }
-                    }
-
+                    repo.getMainResponse().collectLatest { it?.let { processWeatherData(it) } }
                 } else {
 
                     val lat = latitude.toString()
@@ -55,9 +49,7 @@ class HomeViewModel(
                     val key = Pair("$lat,$lon", sharedPrefManager.getLanguage())
                     val cachedWeather = WeatherCache.getCachedWeather(key)
                     cachedWeather?.let {
-                        Log.i(TAG, "getWeather: cache response = $it")
-                        _weather.value = it
-                        _apiStatus.value = ApiStatus.Success(it)
+                        processWeatherData(it)
                         return@collectLatest
                     }
 
@@ -67,15 +59,34 @@ class HomeViewModel(
                         lang = sharedPrefManager.getLanguage(),
                     )
                         .collect {
-                            _weather.value = it
-                            _apiStatus.value = ApiStatus.Success(it)
+                            processWeatherData(it)
                             WeatherCache.cacheWeather(key, it)
                             if (isMainResponse)
                                 WeatherCache.setMainResponse(it)
                         }
-
                 }
             }
+        }
+    }
+
+    private fun processWeatherData(it: WeatherResponse) {
+        _weather.value = it
+        _apiStatus.value = ApiStatus.Success(it)
+        mapWeatherIcon()
+    }
+
+    private fun mapWeatherIcon() {
+        _weather.value?.let {
+            it.current?.weather?.get(0)?.icon?.let(::mapIconToWeatherState)
+        }
+    }
+
+
+    private fun mapIconToWeatherState(icon: String) {
+        when (icon) {
+            "09d", "09n", "10d", "10n" -> _weatherState.value = PrecipType.RAIN
+            "13d", "13n" -> _weatherState.value = PrecipType.SNOW
+            else -> _weatherState.value = PrecipType.CLEAR
         }
     }
 

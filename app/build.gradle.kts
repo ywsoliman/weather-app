@@ -95,4 +95,7 @@ dependencies {
 
     // Worker
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    // Weather Animation
+    implementation("com.github.MatteoBattilana:WeatherView:3.0.0")
 }

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,13 +17,14 @@ import androidx.navigation.fragment.navArgs
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
+import com.example.weatherapp.models.FavoritePlaceDTO
+import com.example.weatherapp.network.ConnectivityRepository
+import com.example.weatherapp.network.WeatherRemoteDataSource
+import com.example.weatherapp.repository.Repository
+import com.example.weatherapp.ui.WeatherAnimationViewModel
 import com.example.weatherapp.ui.favorite.viewmodel.FavoriteViewModel
 import com.example.weatherapp.ui.favorite.viewmodel.FavoriteViewModelFactory
 import com.example.weatherapp.ui.map.view.Mode
-import com.example.weatherapp.models.FavoritePlaceDTO
-import com.example.weatherapp.repository.Repository
-import com.example.weatherapp.network.ConnectivityRepository
-import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
@@ -33,6 +35,7 @@ class FavoritesFragment : Fragment() {
     private lateinit var binding: FragmentFavoritesBinding
     private lateinit var connectivityRepository: ConnectivityRepository
     private lateinit var favoriteAdapter: FavoritesAdapter
+    private val weatherAnimationViewModel: WeatherAnimationViewModel by activityViewModels()
     private val favoriteViewModel: FavoriteViewModel by viewModels {
         FavoriteViewModelFactory(
             Repository.getInstance(
@@ -107,6 +110,14 @@ class FavoritesFragment : Fragment() {
                         binding.noPlacesText.visibility = View.GONE
                         favoriteAdapter.submitList(it)
                     }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                weatherAnimationViewModel.weatherState.collectLatest {
+                    binding.weatherAnimation.setWeatherData(it)
                 }
             }
         }

@@ -14,20 +14,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.weatherapp.R
-import com.example.weatherapp.models.AlarmItem
-import com.example.weatherapp.ui.alerts.AndroidAlarmScheduler
-import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModel
-import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModelFactory
 import com.example.weatherapp.databinding.DialogAlertLayoutBinding
 import com.example.weatherapp.databinding.FragmentAlertsBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
-import com.example.weatherapp.repository.Repository
+import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.network.WeatherRemoteDataSource
+import com.example.weatherapp.repository.Repository
+import com.example.weatherapp.ui.WeatherAnimationViewModel
+import com.example.weatherapp.ui.alerts.AndroidAlarmScheduler
+import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModel
+import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModelFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -46,9 +48,8 @@ class AlertsFragment : Fragment() {
 
     private lateinit var binding: FragmentAlertsBinding
     private lateinit var alertsAdapter: AlertsAdapter
-    private val alarmScheduler by lazy {
-        AndroidAlarmScheduler(requireContext())
-    }
+    private val alarmScheduler by lazy { AndroidAlarmScheduler(requireContext()) }
+    private val weatherAnimationViewModel: WeatherAnimationViewModel by activityViewModels()
     private val alertViewModel: AlertViewModel by viewModels {
         AlertViewModelFactory(
             Repository.getInstance(
@@ -91,6 +92,14 @@ class AlertsFragment : Fragment() {
                         binding.noAlertsText.visibility = View.GONE
                         alertsAdapter.submitList(it)
                     }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                weatherAnimationViewModel.weatherState.collectLatest {
+                    binding.weatherAnimation.setWeatherData(it)
                 }
             }
         }
