@@ -4,6 +4,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
@@ -12,6 +13,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDateTime
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
@@ -62,6 +64,23 @@ class WeatherDaoTest {
         dao.delete(favoritePlace)
         val allFavoritePlaces = dao.getFavoritePlaces().first()
         assertThat(allFavoritePlaces).doesNotContain(favoritePlace)
+    }
+
+    @Test
+    fun insertAlarmAlert() = runTest {
+        val alarmItem = AlarmItem(LocalDateTime.now())
+        dao.insertAlarmAlert(alarmItem)
+        val allAlarmItems = dao.getAlarmAlerts().first()
+        assertThat(allAlarmItems).contains(alarmItem)
+    }
+
+    @Test
+    fun deleteAlarmItem() = runTest {
+        val alarmItem = AlarmItem(LocalDateTime.now())
+        dao.insertAlarmAlert(alarmItem)
+        dao.deleteAlarmAlert(alarmItem)
+        val allAlarmItems = dao.getAlarmAlerts().first()
+        assertThat(allAlarmItems).doesNotContain(alarmItem)
     }
 
 }
