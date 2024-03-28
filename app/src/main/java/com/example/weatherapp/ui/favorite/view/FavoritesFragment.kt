@@ -1,6 +1,8 @@
 package com.example.weatherapp.ui.favorite.view
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +28,6 @@ import com.example.weatherapp.ui.favorite.viewmodel.FavoriteViewModel
 import com.example.weatherapp.ui.favorite.viewmodel.FavoriteViewModelFactory
 import com.example.weatherapp.ui.map.view.Mode
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -64,8 +65,7 @@ class FavoritesFragment : Fragment() {
         }
 
         favoriteAdapter = FavoritesAdapter({
-            val action = FavoritesFragmentDirections.actionFavoritesFragmentToHomeFragment(it)
-            findNavController().navigate(action)
+            handleViewingFavoritePlace(it)
         }, {
             handleDeletePlaceButton(it)
         })
@@ -83,13 +83,7 @@ class FavoritesFragment : Fragment() {
                                 )
                             view.findNavController().navigate(action)
                         } else {
-                            Snackbar.make(
-                                requireView(),
-                                getString(R.string.can_t_add_to_favorite_while_internet_is_not_available),
-                                Snackbar.LENGTH_SHORT
-                            )
-                                .setAnchorView(R.id.bottomNavigationView)
-                                .show()
+                            showNoInternetDialog(getString(R.string.can_t_add_to_favorite_while_internet_is_not_available))
                         }
                     }
                 }
@@ -121,6 +115,28 @@ class FavoritesFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun handleViewingFavoritePlace(it: FavoritePlaceDTO) {
+        if (connectivityRepository.isConnected.value) {
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToHomeFragment(it)
+            findNavController().navigate(action)
+        } else {
+            showNoInternetDialog(getString(R.string.please_enable_internet_to_view_your_favorite_places))
+        }
+    }
+
+    private fun showNoInternetDialog(message: String) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.internet_is_not_available))
+            .setMessage(message)
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.enable)) { _, _ ->
+                startActivity(Intent(Settings.ACTION_WIFI_SETTINGS));
+            }
+            .show()
     }
 
     private fun handleDeletePlaceButton(it: FavoritePlaceDTO) {

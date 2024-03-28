@@ -73,5 +73,9 @@
     <string name="select_time">اختر الوقت:</string>
     <string name="press_to_select_a_time">اضغط لتحديد الوقت</string>
     <string name="you_have_lost_connection_to_the_internet_nthis_app_is_offline">لقد فقدت الاتصال بالإنترنت\nهذا التطبيق غير متصل.</string>
+    <string name="internet_not_connected_icon">ايقونة عدم توصيل الإنترنت</string>
+    <string name="internet_is_not_available">الإنترنت غير متاح</string>
+    <string name="please_enable_internet_to_view_your_favorite_places">الرجاء تفعيل الإنترنت لعرض أماكنك المفضلة.</string>
+    <string name="enable">تفعيل</string>
 
 </resources>
