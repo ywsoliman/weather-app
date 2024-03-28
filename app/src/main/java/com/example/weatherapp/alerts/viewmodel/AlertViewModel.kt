@@ -19,7 +19,7 @@ class AlertViewModel(private val repo: IRepository) : ViewModel() {
         getAlarmAlerts()
     }
 
-    private fun getAlarmAlerts() {
+    fun getAlarmAlerts() {
         viewModelScope.launch(Dispatchers.IO) {
             repo.getAlarmAlerts()
                 .collectLatest {
