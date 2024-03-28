@@ -91,12 +91,14 @@ class HomeFragment : Fragment() {
         if (selectedFavoritePlace != null) {
             homeViewModel.setLocationCoordinates(
                 selectedFavoritePlace.latitude,
-                selectedFavoritePlace.longitude
+                selectedFavoritePlace.longitude,
+                false
             )
         } else {
             val coord = SharedPrefManager.getInstance(requireContext()).getCoordinates()
+            Log.i(TAG, "onViewCreated: else condition $coord")
             if (coord != null) {
-                homeViewModel.setLocationCoordinates(coord.latitude, coord.longitude)
+                homeViewModel.setLocationCoordinates(coord.latitude, coord.longitude, true)
             }
         }
 
@@ -199,7 +201,7 @@ class HomeFragment : Fragment() {
                         Log.i(TAG, "onLocationResult: $latitude, $longitude")
                         SharedPrefManager.getInstance(requireContext())
                             .setCoordinates(latitude, longitude)
-                        homeViewModel.setLocationCoordinates(latitude, longitude)
+                        homeViewModel.setLocationCoordinates(latitude, longitude, true)
                     }
                     fusedClient.removeLocationUpdates(this)
                 }
@@ -219,12 +221,10 @@ class HomeFragment : Fragment() {
                 SharedPrefManager.getInstance(requireContext()).setLocationSettings("gps")
                 getFreshLocation()
             } else {
-                SharedPrefManager.getInstance(requireContext()).setCoordinates(0.0, 0.0)
                 binding.weatherDetails.visibility = View.GONE
                 binding.allowLocationCard.visibility = View.VISIBLE
             }
         }
     }
-
 
 }

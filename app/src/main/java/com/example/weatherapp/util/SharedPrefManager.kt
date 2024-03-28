@@ -57,7 +57,7 @@ class SharedPrefManager private constructor(context: Context) {
     }
 
     fun getTemperatureUnit(): String {
-        return settingsPref.getString("temperature", "celsius") ?: "celsius"
+        return settingsPref.getString("temperature", "kelvin") ?: "kelvin"
     }
 
     fun getWindSpeedUnit(): String {

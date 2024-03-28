@@ -15,8 +15,10 @@ class CacheWorker(private val context: Context, workerParams: WorkerParameters) 
 
         val dao = WeatherDatabase.getInstance(context).getDao()
         val cachedResponse = WeatherCache.getMainResponse()
-        dao.deleteMainResponse()
-        dao.insertMainResponse(cachedResponse)
+        cachedResponse?.let {
+            dao.deleteMainResponse()
+            dao.insertMainResponse(it)
+        }
         return Result.success()
 
     }

@@ -9,11 +9,11 @@ import com.example.weatherapp.R
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 @BindingAdapter("url")
 fun loadImage(imageView: ImageView, url: String?) {
@@ -39,8 +39,9 @@ fun loadImage(imageView: ImageView, url: String?) {
 
 @BindingAdapter("getTime")
 fun convertEpochToTime(textView: TextView, time: Long) {
+    val locale = Locale(SharedPrefManager.getInstance(textView.context).getLanguage())
     val date = Date(time * 1000)
-    val formatter = SimpleDateFormat("h a", Locale.ENGLISH)
+    val formatter = SimpleDateFormat("h a", locale)
     val formattedTime = formatter.format(date)
     textView.text = formattedTime
 }
@@ -52,12 +53,6 @@ fun convertDateToDay(textView: TextView, time: Long) {
     val localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate()
     val dayOfWeek = localDate.dayOfWeek
     textView.text = dayOfWeek.getDisplayName(TextStyle.SHORT, locale)
-}
-
-@BindingAdapter("getDateAndTime")
-fun convertLocalDateTimeToString(textView: TextView, time: LocalDateTime) {
-    val date = "${time.dayOfMonth} ${time.monthValue}, ${time.year} - ${time.hour}:${time.minute}"
-    textView.text = date
 }
 
 @BindingAdapter(value = ["locationLat", "locationLon"], requireAll = true)
@@ -81,6 +76,47 @@ fun getLocation(textView: TextView, lat: Double, lon: Double) {
         e.printStackTrace()
     }
 
+}
+
+@BindingAdapter(value = ["temp", "maxTemp"], requireAll = false)
+fun convertTempUnit(textView: TextView, temp: Double, maxTemp: Double?) {
+
+    val sharedPref = SharedPrefManager.getInstance(textView.context)
+    val tempUnit = sharedPref.getTemperatureUnit()
+    val minWeatherDegree =
+        when (tempUnit) {
+            "fahrenheit" -> convertFromKelvinToFahrenheit(temp)
+            "celsius" -> convertFromKelvinToCelsius(temp)
+            else -> temp.roundToInt()
+        }
+
+    val maxWeatherDegree = maxTemp?.let { max ->
+        when (tempUnit) {
+            "fahrenheit" -> convertFromKelvinToFahrenheit(max)
+            "celsius" -> convertFromKelvinToCelsius(max)
+            else -> max.roundToInt()
+        }
+    }
+
+    val formattedTemp = if (maxWeatherDegree != null) {
+        textView.context.getString(
+            R.string.minAndMaxTemp,
+            minWeatherDegree,
+            maxWeatherDegree
+        )
+    } else {
+        textView.context.getString(R.string.temperature, minWeatherDegree)
+    }
+
+    textView.text = formattedTemp
+}
+
+fun convertFromKelvinToFahrenheit(temp: Double): Int {
+    return ((temp - 273.15) * 9 / 5 + 32).roundToInt()
+}
+
+fun convertFromKelvinToCelsius(temp: Double): Int {
+    return (temp - 273.15).roundToInt()
 }
 
 @BindingAdapter("convertSpeed")

@@ -33,7 +33,7 @@
         app:title="@string/units_of_measurements">
 
         <ListPreference
-            app:defaultValue="celsius"
+            app:defaultValue="kelvin"
             app:entries="@array/temp_entries"
             app:entryValues="@array/temp_values"
             app:key="temperature"

@@ -1,5 +1,6 @@
 package com.example.weatherapp.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.Repository
@@ -33,7 +34,7 @@ class HomeViewModel(
 
     val isConnected = connectivityRepository.isConnected
 
-    private fun getWeather(latitude: Double, longitude: Double) {
+    fun setLocationCoordinates(latitude: Double, longitude: Double, isMainResponse: Boolean) {
 
         viewModelScope.launch(Dispatchers.IO) {
             isConnected.collectLatest { isOnline ->
@@ -51,9 +52,10 @@ class HomeViewModel(
 
                     val lat = latitude.toString()
                     val lon = longitude.toString()
-                    val key = "$lat,$lon"
+                    val key = Pair("$lat,$lon", sharedPrefManager.getLanguage())
                     val cachedWeather = WeatherCache.getCachedWeather(key)
                     cachedWeather?.let {
+                        Log.i(TAG, "getWeather: cache response = $it")
                         _weather.value = it
                         _apiStatus.value = ApiStatus.Success(it)
                         return@collectLatest
@@ -63,12 +65,13 @@ class HomeViewModel(
                         latitude,
                         longitude,
                         lang = sharedPrefManager.getLanguage(),
-                        units = sharedPrefManager.convertTemperatureToUnits()
                     )
                         .collect {
                             _weather.value = it
                             _apiStatus.value = ApiStatus.Success(it)
                             WeatherCache.cacheWeather(key, it)
+                            if (isMainResponse)
+                                WeatherCache.setMainResponse(it)
                         }
 
                 }
@@ -85,8 +88,5 @@ class HomeViewModel(
         return "$dayOfWeek, $dayOfMonth $month"
     }
 
-    fun setLocationCoordinates(latitude: Double, longitude: Double) {
-        getWeather(latitude, longitude)
-    }
 
 }

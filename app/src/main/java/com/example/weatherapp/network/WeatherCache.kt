@@ -4,18 +4,23 @@ import com.example.weatherapp.models.WeatherResponse
 
 object WeatherCache {
 
-    private val cachedWeather = mutableMapOf<String, WeatherResponse>()
+    private val cachedWeather = mutableMapOf<Pair<String, String>, WeatherResponse>()
+    private var homeCachedWeather: WeatherResponse? = null
 
-    fun getCachedWeather(key: String): WeatherResponse? {
+    fun getCachedWeather(key: Pair<String, String>): WeatherResponse? {
         return cachedWeather[key]
     }
 
-    fun cacheWeather(key: String, weatherResponse: WeatherResponse) {
+    fun cacheWeather(key: Pair<String, String>, weatherResponse: WeatherResponse) {
         cachedWeather[key] = weatherResponse
     }
 
-    fun getMainResponse(): WeatherResponse {
-        return cachedWeather.values.first()
+    fun getMainResponse(): WeatherResponse? {
+        return homeCachedWeather
+    }
+
+    fun setMainResponse(response: WeatherResponse) {
+        homeCachedWeather = response
     }
 
 }

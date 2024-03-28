@@ -10,7 +10,7 @@ interface IRepository {
         lon: Double,
         apiKey: String = Constants.API_KEY,
         exclude: String = "minutely",
-        units: String? = "metric",
+        units: String? = "standard",
         lang: String? = "en"
     ): Flow<WeatherResponse>
 
