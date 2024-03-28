@@ -11,7 +11,7 @@
     <string name="pressure">الضغط</string>
     <string name="cloud">السحب</string>
     <string name="location">%1$s، %2$s</string>
-    <string name="temperature">%1$s°</string>
+    <string name="temperature">%1$d°</string>
     <string name="location_icon">أيقونة الموقع</string>
     <string name="current_weather_icon">أيقونة الطقس الحالي</string>
     <string name="air_icon">أيقونة الهواء</string>
@@ -37,7 +37,7 @@
     <string name="please_allow_application_to_access_your_location">يرجى السماح للتطبيق بالوصول إلى موقعك</string>
     <string name="allow">السماح</string>
     <string name="upcoming_days">الأيام القادمة</string>
-    <string name="minAndMaxTemp">%1$s/%2$s°</string>
+    <string name="minAndMaxTemp">%1$d/%2$d°</string>
     <string name="units_of_measurements">وحدات القياس</string>
     <string name="imperial">امبريالي</string>
     <string name="metric">متري</string>

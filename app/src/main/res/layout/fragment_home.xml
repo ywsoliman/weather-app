@@ -54,16 +54,23 @@
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/noInternetImage"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/noInternetImage"
                 app:layout_constraintTop_toTopOf="@+id/noInternetImage" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/allowLocationCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             android:layout_margin="16dp"
             android:background="@drawable/round_corner_background"
             android:padding="32dp"
@@ -108,15 +115,6 @@
                 app:layout_constraintStart_toStartOf="@+id/textView6"
                 app:layout_constraintTop_toBottomOf="@+id/textView7" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:visibility="gone" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -187,13 +185,13 @@
                             android:id="@+id/currentTemp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{@string/temperature(String.valueOf(Math.round(viewModel.weather.current.temp)))}"
                             android:textSize="72sp"
                             android:textStyle="bold"
                             app:layout_constraintEnd_toEndOf="@+id/currentWeatherImage"
                             app:layout_constraintHorizontal_bias="0.5"
                             app:layout_constraintStart_toStartOf="@+id/currentWeatherImage"
                             app:layout_constraintTop_toBottomOf="@+id/currentWeatherImage"
+                            app:temp="@{viewModel.weather.current.temp}"
                             tools:text="21" />
 
                         <TextView
@@ -406,4 +404,5 @@
         </androidx.core.widget.NestedScrollView>
 
     </RelativeLayout>
+
 </layout>

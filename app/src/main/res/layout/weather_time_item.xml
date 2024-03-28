@@ -47,8 +47,8 @@
                 android:id="@+id/degreeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@string/temperature(String.valueOf(Math.round(currentTime.temp)))}"
                 android:textSize="18sp"
+                app:temp="@{currentTime.temp}"
                 tools:text="13°" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

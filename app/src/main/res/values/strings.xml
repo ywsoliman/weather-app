@@ -11,7 +11,7 @@
     <string name="pressure">Pressure</string>
     <string name="cloud">Cloud</string>
     <string name="location">%1$s, %2$s</string>
-    <string name="temperature">%1$s°</string>
+    <string name="temperature">%1$d°</string>
     <string name="location_icon">Location Icon</string>
     <string name="current_weather_icon">Current Weather Icon</string>
     <string name="air_icon">Air Icon</string>
@@ -37,7 +37,7 @@
     <string name="please_allow_application_to_access_your_location">Please allow application to access your location</string>
     <string name="allow">Allow</string>
     <string name="upcoming_days">Upcoming Days</string>
-    <string name="minAndMaxTemp">%1$s/%2$s°</string>
+    <string name="minAndMaxTemp">%1$d/%2$d°</string>
     <string name="units_of_measurements">Units of Measurements</string>
     <string name="imperial">Imperial</string>
     <string name="metric">Metric</string>

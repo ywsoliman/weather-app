@@ -64,12 +64,13 @@
                 android:id="@+id/nextDaysTempText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{@string/minAndMaxTemp(String.valueOf(Math.round(currentDay.Temp.max)), String.valueOf(Math.round(currentDay.Temp.min)))}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/nextDaysDescription"
                 app:layout_constraintTop_toTopOf="parent"
+                app:maxTemp="@{currentDay.Temp.max}"
+                app:temp="@{currentDay.Temp.min}"
                 tools:text="23/13°C" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
