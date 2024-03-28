@@ -20,7 +20,7 @@ import com.example.weatherapp.ui.favorite.viewmodel.FavoriteViewModel
 import com.example.weatherapp.ui.favorite.viewmodel.FavoriteViewModelFactory
 import com.example.weatherapp.ui.map.view.Mode
 import com.example.weatherapp.models.FavoritePlaceDTO
-import com.example.weatherapp.models.Repository
+import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
 import com.example.weatherapp.R
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.models.AlarmItem
-import com.example.weatherapp.models.Repository
+import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.util.Constants

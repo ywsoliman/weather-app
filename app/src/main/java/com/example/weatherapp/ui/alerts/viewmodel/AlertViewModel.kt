@@ -3,7 +3,7 @@ package com.example.weatherapp.ui.alerts.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.models.AlarmItem
-import com.example.weatherapp.models.IRepository
+import com.example.weatherapp.repository.IRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

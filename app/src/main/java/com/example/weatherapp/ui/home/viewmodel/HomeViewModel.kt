@@ -3,7 +3,7 @@ package com.example.weatherapp.ui.home.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.models.Repository
+import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.models.WeatherResponse
 import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherCache

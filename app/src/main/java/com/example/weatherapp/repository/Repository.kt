@@ -1,6 +1,9 @@
-package com.example.weatherapp.models
+package com.example.weatherapp.repository
 
 import com.example.weatherapp.db.IWeatherLocalDataSource
+import com.example.weatherapp.models.AlarmItem
+import com.example.weatherapp.models.FavoritePlaceDTO
+import com.example.weatherapp.models.WeatherResponse
 import com.example.weatherapp.network.IWeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 

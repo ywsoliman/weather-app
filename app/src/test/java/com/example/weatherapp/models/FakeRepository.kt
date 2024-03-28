@@ -1,5 +1,6 @@
 package com.example.weatherapp.models
 
+import com.example.weatherapp.repository.IRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 

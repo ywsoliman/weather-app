@@ -2,7 +2,7 @@ package com.example.weatherapp.ui.alerts.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.weatherapp.models.IRepository
+import com.example.weatherapp.repository.IRepository
 
 class AlertViewModelFactory(private val repo: IRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -26,7 +26,7 @@ import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModelFactory
 import com.example.weatherapp.databinding.DialogAlertLayoutBinding
 import com.example.weatherapp.databinding.FragmentAlertsBinding
 import com.example.weatherapp.db.WeatherLocalDataSource
-import com.example.weatherapp.models.Repository
+import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
