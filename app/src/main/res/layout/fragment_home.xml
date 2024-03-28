@@ -7,15 +7,15 @@
 
         <variable
             name="viewModel"
-            type="com.example.weatherapp.home.viewmodel.HomeViewModel" />
+            type="com.example.weatherapp.ui.home.viewmodel.HomeViewModel" />
 
         <variable
             name="todayAdapter"
-            type="com.example.weatherapp.home.view.HourlyWeatherAdapter" />
+            type="com.example.weatherapp.ui.home.view.HourlyWeatherAdapter" />
 
         <variable
             name="nextDaysAdapter"
-            type="com.example.weatherapp.home.view.NextDaysWeatherAdapter" />
+            type="com.example.weatherapp.ui.home.view.NextDaysWeatherAdapter" />
 
 
     </data>
@@ -126,7 +126,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                tools:context=".home.view.HomeFragment">
+                tools:context=".ui.home.view.HomeFragment">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"

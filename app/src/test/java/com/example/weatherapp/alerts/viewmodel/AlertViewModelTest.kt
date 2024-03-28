@@ -3,6 +3,7 @@ package com.example.weatherapp.alerts.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.FakeRepository
+import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest

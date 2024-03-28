@@ -7,14 +7,14 @@
 
         <variable
             name="adapter"
-            type="com.example.weatherapp.favorite.view.FavoritesAdapter" />
+            type="com.example.weatherapp.ui.favorite.view.FavoritesAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
-        tools:context=".favorite.view.FavoritesFragment">
+        tools:context=".ui.favorite.view.FavoritesFragment">
 
 
         <androidx.recyclerview.widget.RecyclerView

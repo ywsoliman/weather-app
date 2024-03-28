@@ -3,6 +3,7 @@ package com.example.weatherapp.favorite.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.weatherapp.models.FakeRepository
 import com.example.weatherapp.models.FavoritePlaceDTO
+import com.example.weatherapp.ui.favorite.viewmodel.FavoriteViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest

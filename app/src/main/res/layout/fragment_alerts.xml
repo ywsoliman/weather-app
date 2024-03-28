@@ -7,14 +7,14 @@
 
         <variable
             name="adapter"
-            type="com.example.weatherapp.alerts.view.AlertsAdapter" />
+            type="com.example.weatherapp.ui.alerts.view.AlertsAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="16dp"
-        tools:context=".alerts.view.AlertsFragment">
+        tools:context=".ui.alerts.view.AlertsFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAlerts"

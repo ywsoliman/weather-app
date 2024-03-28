@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.weatherapp.home.view.HomeFragment"
+        android:name="com.example.weatherapp.ui.home.view.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
         <argument
@@ -18,12 +18,12 @@
     </fragment>
     <fragment
         android:id="@+id/alertsFragment"
-        android:name="com.example.weatherapp.alerts.view.AlertsFragment"
+        android:name="com.example.weatherapp.ui.alerts.view.AlertsFragment"
         android:label="Alerts"
         tools:layout="@layout/fragment_alerts" />
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.example.weatherapp.favorite.view.FavoritesFragment"
+        android:name="com.example.weatherapp.ui.favorite.view.FavoritesFragment"
         android:label="Favorites"
         tools:layout="@layout/fragment_favorites">
         <action
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.weatherapp.map.view.MapFragment"
+        android:name="com.example.weatherapp.ui.map.view.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map">
         <action
@@ -50,14 +50,14 @@
             app:popUpToInclusive="true" />
         <argument
             android:name="mode"
-            app:argType="com.example.weatherapp.map.view.Mode" />
+            app:argType="com.example.weatherapp.ui.map.view.Mode" />
         <action
             android:id="@+id/action_mapFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.weatherapp.settings.view.SettingsFragment"
+        android:name="com.example.weatherapp.ui.settings.view.SettingsFragment"
         android:label="SettingsFragment" >
         <action
             android:id="@+id/action_settingsFragment_to_mapFragment"
