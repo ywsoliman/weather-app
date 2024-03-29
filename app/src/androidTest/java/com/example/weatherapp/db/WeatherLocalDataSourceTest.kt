@@ -24,8 +24,10 @@ class WeatherLocalDataSourceTest {
         database = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
             WeatherDatabase::class.java
-        ).allowMainThreadQueries().build()
-        localDataSource = WeatherLocalDataSource(ApplicationProvider.getApplicationContext())
+        )
+            .allowMainThreadQueries()
+            .build()
+        localDataSource = WeatherLocalDataSource(database.getDao())
     }
 
     @After

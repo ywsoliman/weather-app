@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentFavoritesBinding
+import com.example.weatherapp.db.WeatherDatabase
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.network.ConnectivityRepository
@@ -40,7 +41,7 @@ class FavoritesFragment : Fragment() {
     private val favoriteViewModel: FavoriteViewModel by viewModels {
         FavoriteViewModelFactory(
             Repository.getInstance(
-                WeatherLocalDataSource(requireContext()),
+                WeatherLocalDataSource(WeatherDatabase.getInstance(requireContext()).getDao()),
                 WeatherRemoteDataSource
             )
         )

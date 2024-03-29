@@ -1,14 +1,11 @@
 package com.example.weatherapp.db
 
-import android.content.Context
 import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.models.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 
-class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
-
-    private val dao = WeatherDatabase.getInstance(context).getDao()
+class WeatherLocalDataSource(private val dao: WeatherDAO) : IWeatherLocalDataSource {
 
     companion object {
 
@@ -16,10 +13,10 @@ class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
         private var INSTANCE: WeatherLocalDataSource? = null
 
         fun getInstance(
-            context: Context
+            dao: WeatherDAO
         ): WeatherLocalDataSource {
             return INSTANCE ?: synchronized(this) {
-                val instance = WeatherLocalDataSource(context)
+                val instance = WeatherLocalDataSource(dao)
                 INSTANCE = instance
                 instance
             }

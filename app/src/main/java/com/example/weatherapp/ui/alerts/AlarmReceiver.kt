@@ -10,6 +10,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.weatherapp.R
+import com.example.weatherapp.db.WeatherDatabase
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.network.ConnectivityRepository
@@ -43,7 +44,7 @@ class AlarmReceiver : BroadcastReceiver() {
         context?.let { myContext ->
 
             repo = Repository.getInstance(
-                WeatherLocalDataSource(myContext),
+                WeatherLocalDataSource(WeatherDatabase.getInstance(myContext).getDao()),
                 WeatherRemoteDataSource
             )
 

@@ -24,6 +24,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
+import com.example.weatherapp.db.WeatherDatabase
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.network.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
@@ -59,7 +60,7 @@ class HomeFragment : Fragment() {
             SharedPrefManager.getInstance(requireContext()),
             ConnectivityRepository(requireContext()),
             Repository.getInstance(
-                WeatherLocalDataSource.getInstance(requireContext()),
+                WeatherLocalDataSource(WeatherDatabase.getInstance(requireContext()).getDao()),
                 WeatherRemoteDataSource
             )
         )

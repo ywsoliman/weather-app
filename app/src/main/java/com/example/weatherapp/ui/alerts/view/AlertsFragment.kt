@@ -22,6 +22,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.DialogAlertLayoutBinding
 import com.example.weatherapp.databinding.FragmentAlertsBinding
+import com.example.weatherapp.db.WeatherDatabase
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.network.WeatherRemoteDataSource
@@ -53,7 +54,7 @@ class AlertsFragment : Fragment() {
     private val alertViewModel: AlertViewModel by viewModels {
         AlertViewModelFactory(
             Repository.getInstance(
-                WeatherLocalDataSource(requireContext()),
+                WeatherLocalDataSource(WeatherDatabase.getInstance(requireContext()).getDao()),
                 WeatherRemoteDataSource
             )
         )
