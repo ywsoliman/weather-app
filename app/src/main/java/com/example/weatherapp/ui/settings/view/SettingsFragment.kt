@@ -84,7 +84,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val longitude = locationResult.lastLocation?.longitude
                         val latitude = locationResult.lastLocation?.latitude
                         if (latitude != null && longitude != null) {
-                            SharedPrefManager.getInstance(requireContext())
+                            SharedPrefManager.getInstance(requireActivity())
                                 .setCoordinates(latitude, longitude)
                         }
                         fusedClient.removeLocationUpdates(this)

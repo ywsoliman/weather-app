@@ -24,4 +24,6 @@ interface IRepository {
     suspend fun getAlarmAlerts(): Flow<List<AlarmItem>>
     suspend fun deleteFromAlerts(alarm: AlarmItem)
     suspend fun insertAlarmAlert(alarm: AlarmItem)
+    suspend fun insertMainResponse(response: WeatherResponse)
+    suspend fun deleteOldResponse()
 }

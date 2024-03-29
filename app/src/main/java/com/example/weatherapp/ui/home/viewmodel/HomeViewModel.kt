@@ -60,6 +60,7 @@ class HomeViewModel(
                     )
                         .collect {
                             processWeatherData(it)
+                            refreshMainResponse(it)
                             WeatherCache.cacheWeather(key, it)
                             if (isMainResponse)
                                 WeatherCache.setMainResponse(it)
@@ -67,6 +68,11 @@ class HomeViewModel(
                 }
             }
         }
+    }
+
+    private suspend fun refreshMainResponse(response: WeatherResponse) {
+        repo.deleteOldResponse()
+        repo.insertMainResponse(response)
     }
 
     private fun processWeatherData(it: WeatherResponse) {

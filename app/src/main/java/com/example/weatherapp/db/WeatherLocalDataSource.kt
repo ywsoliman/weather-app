@@ -55,4 +55,12 @@ class WeatherLocalDataSource(context: Context) : IWeatherLocalDataSource {
         return dao.insertAlarmAlert(alarm)
     }
 
+    override suspend fun insertMainResponse(response: WeatherResponse) {
+        dao.insertMainResponse(response)
+    }
+
+    override suspend fun deleteOldResponse() {
+        dao.deleteMainResponse()
+    }
+
 }

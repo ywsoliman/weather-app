@@ -52,17 +52,13 @@ class SharedPrefManager private constructor(context: Context) {
             .apply()
     }
 
-    fun getLanguage(): String {
-        return settingsPref.getString("language", "en") ?: "en"
-    }
+    fun getLocation() = settingsPref.getString("location", "gps") ?: "gps"
 
-    fun getTemperatureUnit(): String {
-        return settingsPref.getString("temperature", "kelvin") ?: "kelvin"
-    }
+    fun getLanguage() = settingsPref.getString("language", "en") ?: "en"
 
-    fun getWindSpeedUnit(): String {
-        return settingsPref.getString("wind", "m/s") ?: "m/s"
-    }
+    fun getTemperatureUnit() = settingsPref.getString("temperature", "kelvin") ?: "kelvin"
+
+    fun getWindSpeedUnit() = settingsPref.getString("wind", "m/s") ?: "m/s"
 
     fun convertTemperatureToUnits() = when (getTemperatureUnit()) {
         "celsius" -> "metric"

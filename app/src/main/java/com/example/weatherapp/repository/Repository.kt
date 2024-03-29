@@ -69,5 +69,12 @@ class Repository private constructor(
         localDataSource.insertAlarmAlert(alarm)
     }
 
+    override suspend fun insertMainResponse(response: WeatherResponse) {
+        localDataSource.insertMainResponse(response)
+    }
+
+    override suspend fun deleteOldResponse() {
+        localDataSource.deleteOldResponse()
+    }
 
 }
