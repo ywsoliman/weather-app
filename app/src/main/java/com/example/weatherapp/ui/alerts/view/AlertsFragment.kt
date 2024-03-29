@@ -164,8 +164,8 @@ class AlertsFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val dateFormatter = DateTimeFormatter.ofPattern("dd MMM, yyyy", Locale.ENGLISH)
-            val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
+            val dateFormatter = DateTimeFormatter.ofPattern("dd MMM, yyyy", Locale.getDefault())
+            val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault())
             val localDate = LocalDate.parse(binding.selectDateBtn.text, dateFormatter)
             val localTime = LocalTime.parse(binding.selectTimeBtn.text, timeFormatter)
 
