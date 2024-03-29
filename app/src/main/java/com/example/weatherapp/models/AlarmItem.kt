@@ -1,12 +1,12 @@
 package com.example.weatherapp.models
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import java.io.Serializable
 import java.time.LocalDateTime
 
-@Entity(tableName = "alarm_alerts")
+@Entity(tableName = "alarm_alerts", primaryKeys = ["time", "latitude", "longitude"])
 data class AlarmItem(
-    @PrimaryKey
     val time: LocalDateTime,
-): Serializable
+    val latitude: Double,
+    val longitude: Double
+) : Serializable

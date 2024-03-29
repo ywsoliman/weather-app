@@ -68,7 +68,7 @@ class WeatherDaoTest {
 
     @Test
     fun insertAlarmAlert() = runTest {
-        val alarmItem = AlarmItem(LocalDateTime.now())
+        val alarmItem = AlarmItem(LocalDateTime.now(), 11.1, 22.2)
         dao.insertAlarmAlert(alarmItem)
         val allAlarmItems = dao.getAlarmAlerts().first()
         assertThat(allAlarmItems).contains(alarmItem)
@@ -76,7 +76,7 @@ class WeatherDaoTest {
 
     @Test
     fun deleteAlarmItem() = runTest {
-        val alarmItem = AlarmItem(LocalDateTime.now())
+        val alarmItem = AlarmItem(LocalDateTime.now(), 11.1, 22.2)
         dao.insertAlarmAlert(alarmItem)
         dao.deleteAlarmAlert(alarmItem)
         val allAlarmItems = dao.getAlarmAlerts().first()

@@ -31,6 +31,7 @@ import com.example.weatherapp.ui.WeatherAnimationViewModel
 import com.example.weatherapp.ui.alerts.AndroidAlarmScheduler
 import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModel
 import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModelFactory
+import com.example.weatherapp.util.SharedPrefManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -170,10 +171,13 @@ class AlertsFragment : Fragment() {
             val localDate = LocalDate.parse(binding.selectDateBtn.text, dateFormatter)
             val localTime = LocalTime.parse(binding.selectTimeBtn.text, timeFormatter)
 
-            val alarmItem = AlarmItem(LocalDateTime.of(localDate, localTime))
-
-            alarmScheduler.schedule(alarmItem)
-            alertViewModel.insertAlarmAlert(alarmItem)
+            val coordinates = SharedPrefManager.getInstance(requireContext()).getCoordinates()
+            coordinates?.let {
+                val alarmItem =
+                    AlarmItem(LocalDateTime.of(localDate, localTime), it.latitude, it.longitude)
+                alarmScheduler.schedule(alarmItem)
+                alertViewModel.insertAlarmAlert(alarmItem)
+            }
 
             dialog.dismiss()
         }

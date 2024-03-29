@@ -12,6 +12,9 @@ import org.junit.Before
 import org.junit.Test
 import java.time.LocalDateTime
 
+private const val LATITUDE = 11.1
+private const val LONGITUDE = 22.2
+
 class RepositoryTest {
 
     private val firstFavoritePlace = FavoritePlaceDTO(
@@ -29,9 +32,9 @@ class RepositoryTest {
         "Cairo",
         "Madinet Nasr"
     )
-    private val currentAlarmItem = AlarmItem(LocalDateTime.now())
-    private val maxAlarmItem = AlarmItem(LocalDateTime.MAX)
-    private val weatherResponse = WeatherResponse(11.1, 22.2)
+    private val currentAlarmItem = AlarmItem(LocalDateTime.now(), LATITUDE, LONGITUDE)
+    private val maxAlarmItem = AlarmItem(LocalDateTime.MAX, LATITUDE, LONGITUDE)
+    private val weatherResponse = WeatherResponse(LATITUDE, LONGITUDE)
 
     private val localFavorites = listOf(firstFavoritePlace, secondFavoritePlace)
     private val localAlerts = listOf(currentAlarmItem, maxAlarmItem)
@@ -82,7 +85,7 @@ class RepositoryTest {
 
     @Test
     fun insertAlarmAlert() = runTest {
-        val newAlarmAlert = AlarmItem(LocalDateTime.MIN)
+        val newAlarmAlert = AlarmItem(LocalDateTime.MIN, LATITUDE, LONGITUDE)
         repository.insertAlarmAlert(newAlarmAlert)
         val alarmAlerts = repository.getAlarmAlerts().first()
         assertThat(alarmAlerts).contains(newAlarmAlert)

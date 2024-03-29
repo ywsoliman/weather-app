@@ -12,6 +12,9 @@ import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDateTime
 
+private const val LATITUDE = 11.1
+private const val LONGITUDE = 22.2
+
 class AlertViewModelTest {
 
     private lateinit var viewModel: AlertViewModel
@@ -26,8 +29,8 @@ class AlertViewModelTest {
 
     @Test
     fun insertAlarmAlert() = runTest {
-        val currentAlarmItem = AlarmItem(LocalDateTime.now())
-        val maxAlarmItem = AlarmItem(LocalDateTime.MAX)
+        val currentAlarmItem = AlarmItem(LocalDateTime.now(), LATITUDE, LONGITUDE)
+        val maxAlarmItem = AlarmItem(LocalDateTime.MAX, LATITUDE, LONGITUDE)
 
         viewModel.insertAlarmAlert(currentAlarmItem)
         viewModel.insertAlarmAlert(maxAlarmItem)
@@ -40,7 +43,7 @@ class AlertViewModelTest {
 
     @Test
     fun deleteAlarmAlert() = runTest {
-        val currentAlarmItem = AlarmItem(LocalDateTime.now())
+        val currentAlarmItem = AlarmItem(LocalDateTime.now(), LATITUDE, LONGITUDE)
 
         viewModel.insertAlarmAlert(currentAlarmItem)
         viewModel.deleteAlarmAlert(currentAlarmItem)

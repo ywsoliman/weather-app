@@ -66,7 +66,7 @@ class WeatherLocalDataSourceTest {
 
     @Test
     fun insertAlarmAlert() = runTest {
-        val alarmItem = AlarmItem(LocalDateTime.now())
+        val alarmItem = AlarmItem(LocalDateTime.now(), 11.1, 22.2)
         localDataSource.insertAlarmAlert(alarmItem)
         val allAlarmItems = localDataSource.getAlarmAlerts().first()
         assertThat(allAlarmItems).contains(alarmItem)
@@ -74,7 +74,7 @@ class WeatherLocalDataSourceTest {
 
     @Test
     fun deleteAlarmItem() = runTest {
-        val alarmItem = AlarmItem(LocalDateTime.now())
+        val alarmItem = AlarmItem(LocalDateTime.now(), 11.1, 22.2)
         localDataSource.insertAlarmAlert(alarmItem)
         localDataSource.deleteFromAlerts(alarmItem)
         val allAlarmItems = localDataSource.getAlarmAlerts().first()

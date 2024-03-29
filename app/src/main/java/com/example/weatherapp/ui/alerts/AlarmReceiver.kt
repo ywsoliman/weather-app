@@ -28,9 +28,6 @@ private const val TAG = "AlarmReceiver"
 
 class AlarmReceiver : BroadcastReceiver() {
 
-    private lateinit var repo: Repository
-    private lateinit var sharedPrefManager: SharedPrefManager
-
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val currentAlarmItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -43,55 +40,56 @@ class AlarmReceiver : BroadcastReceiver() {
 
         context?.let { myContext ->
 
-            repo = Repository.getInstance(
+            val repo = Repository.getInstance(
                 WeatherLocalDataSource(WeatherDatabase.getInstance(myContext).getDao()),
                 WeatherRemoteDataSource
             )
 
-            sharedPrefManager = SharedPrefManager.getInstance(myContext)
+            val sharedPrefManager = SharedPrefManager.getInstance(myContext)
+            val notificationManager =
+                myContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            val notificationsEnabled = notificationManager.areNotificationsEnabled()
+            val connectivityRepository = ConnectivityRepository(myContext)
 
             CoroutineScope(Dispatchers.IO).launch {
 
-                currentAlarmItem?.let { repo.deleteFromAlerts(it) }
+                currentAlarmItem?.let {
 
-                val notificationManager =
-                    myContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    repo.deleteFromAlerts(it)
 
-                val notificationsEnabled = notificationManager.areNotificationsEnabled()
-                val connectivityRepository = ConnectivityRepository(myContext)
+                    connectivityRepository.isConnected.collectLatest { isConnected ->
+                        if (isConnected && notificationsEnabled) {
+                            repo.getWeather(
+                                it.latitude,
+                                it.longitude,
+                                exclude = "minutely,hourly,daily,alerts",
+                                lang = sharedPrefManager.getLanguage(),
+                            ).collectLatest {
 
-                connectivityRepository.isConnected.collectLatest { isConnected ->
-                    if (isConnected && notificationsEnabled) {
-                        repo.getWeather(
-                            sharedPrefManager.getCoordinates()?.latitude!!,
-                            sharedPrefManager.getCoordinates()?.longitude!!,
-                            exclude = "minutely,hourly,daily,alerts",
-                            lang = sharedPrefManager.getLanguage(),
-                            units = sharedPrefManager.convertTemperatureToUnits()
-                        ).collectLatest {
+                                val customSoundUri =
+                                    Uri.parse("android.resource://" + myContext.packageName + "/raw/notification_sound")
 
-                            val customSoundUri =
-                                Uri.parse("android.resource://" + myContext.packageName + "/raw/notification_sound")
+                                val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+                                    .setSmallIcon(R.drawable.cloudy)
+                                    .setContentTitle("Weather Alert")
+                                    .setContentText(it.current?.weather?.get(0)?.description)
+                                    .setAutoCancel(true)
+                                    .setSound(customSoundUri)
+                                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                                    .setPriority(NotificationCompat.PRIORITY_HIGH)
 
-                            val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-                                .setSmallIcon(R.drawable.cloudy)
-                                .setContentTitle("Weather Alert")
-                                .setContentText(it.current?.weather?.get(0)?.description)
-                                .setAutoCancel(true)
-                                .setSound(customSoundUri)
-                                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                val channel = NotificationChannel(
+                                    CHANNEL_ID,
+                                    "Weather Alerts",
+                                    NotificationManager.IMPORTANCE_HIGH
+                                )
+                                channel.description =
+                                    "This channel is specialized in receiving weather alerts."
+                                notificationManager.createNotificationChannel(channel)
+                                notificationManager.notify(1, builder.build())
 
-                            val channel = NotificationChannel(
-                                CHANNEL_ID,
-                                "Weather Alerts",
-                                NotificationManager.IMPORTANCE_HIGH
-                            )
-                            channel.description =
-                                "This channel is specialized in receiving weather alerts."
-                            notificationManager.createNotificationChannel(channel)
-                            notificationManager.notify(1, builder.build())
-
+                            }
                         }
                     }
                 }
