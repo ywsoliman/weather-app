@@ -9,7 +9,9 @@ import com.example.weatherapp.R
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Date
 import java.util.Locale
@@ -147,6 +149,14 @@ fun convertSpeedAccordingToTemp(textView: TextView, windSpeed: Double) {
     // temp	-> Kelvin	Celsius	    Fahrenheit
     // wind -> m/s      m/s	        mpa
 }
+
+@BindingAdapter("formatDate")
+fun formatDateToHumanReadable(textView: TextView, time: LocalDateTime) {
+    val locale = SharedPrefManager.getInstance(textView.context).getLanguage()
+    val formatter = DateTimeFormatter.ofPattern("dd MMM, yyyy - hh:mm a", Locale(locale))
+    textView.text = formatter.format(time)
+}
+
 
 fun convertMetersPerSecondToMilesPerHour(num: Double): Double {
     return num * 2.237
