@@ -4,9 +4,10 @@ import android.content.Context
 import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherapp.ui.map.view.Mode
+import com.example.weatherapp.R
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.sharedpref.SharedPrefManager
+import com.example.weatherapp.ui.map.view.Mode
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -59,7 +60,7 @@ class MapViewModel : ViewModel() {
                             NavigationEvent.AddLocation(favoritePlace)
                         )
                     } else {
-                        _showSnackbarEvent.emit("Couldn't find address for the marked point. Please choose another one.")
+                        _showSnackbarEvent.emit(context.getString(R.string.couldn_t_find_address_for_the_marked_point_please_choose_another_one))
                     }
                 }
             }

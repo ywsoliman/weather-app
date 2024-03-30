@@ -104,11 +104,11 @@ class AlarmReceiver : BroadcastReceiver() {
             .setSmallIcon(R.drawable.cloudy)
             .setContentTitle(myContext.getString(R.string.weather_alert))
             .setContentText(
-                "Current weather at $address is ${
-                    response.current?.weather?.get(
-                        0
-                    )?.description
-                }"
+                myContext.getString(
+                    R.string.current_weather_at_is,
+                    address,
+                    response.current?.weather?.get(0)?.description
+                )
             )
             .setSound(soundUri)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
