@@ -1,10 +1,8 @@
 package com.example.weatherapp.ui.alerts.view
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.NotificationManager
-import android.app.TimePickerDialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -27,12 +25,17 @@ import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.repository.Repository
+import com.example.weatherapp.sharedpref.SharedPrefManager
 import com.example.weatherapp.ui.WeatherAnimationViewModel
 import com.example.weatherapp.ui.alerts.AndroidAlarmScheduler
 import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModel
 import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModelFactory
-import com.example.weatherapp.sharedpref.SharedPrefManager
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -41,10 +44,10 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 private const val NOTIFICATION_REQUEST_CODE = 200
-private const val TAG = "AlertsFragment"
 
 class AlertsFragment : Fragment() {
 
@@ -125,6 +128,20 @@ class AlertsFragment : Fragment() {
             handleAddingAlert()
     }
 
+    private fun handleDeleteAlertButton(alarmItem: AlarmItem) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.delete_selected_alert))
+            .setMessage(getString(R.string.selected_alert_will_be_permanently_removed_and_you_won_t_get_notified_of_the_weather_details_at_that_time))
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                alarmScheduler.cancel(alarmItem)
+                alertViewModel.deleteAlarmAlert(alarmItem)
+            }
+            .show()
+    }
+
     private fun handleAddingAlert() {
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
@@ -159,15 +176,15 @@ class AlertsFragment : Fragment() {
             ) {
                 Toast.makeText(
                     requireContext(),
-                    "Please select both date and time to continue",
+                    getString(R.string.please_select_both_date_and_time_to_continue),
                     Toast.LENGTH_SHORT
                 )
                     .show()
                 return@setOnClickListener
             }
 
-            val dateFormatter = DateTimeFormatter.ofPattern("dd MMM, yyyy", Locale.getDefault())
-            val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault())
+            val dateFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.US)
+            val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.US)
             val localDate = LocalDate.parse(binding.selectDateBtn.text, dateFormatter)
             val localTime = LocalTime.parse(binding.selectTimeBtn.text, timeFormatter)
 
@@ -184,57 +201,57 @@ class AlertsFragment : Fragment() {
 
     }
 
-    private fun handleDeleteAlertButton(alarmItem: AlarmItem) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.delete_selected_alert))
-            .setMessage(getString(R.string.selected_alert_will_be_permanently_removed_and_you_won_t_get_notified_of_the_weather_details_at_that_time))
-            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                alarmScheduler.cancel(alarmItem)
-                alertViewModel.deleteAlarmAlert(alarmItem)
-            }
-            .show()
-    }
-
     private fun openDateDialog(onDateSelected: (String) -> Unit) {
 
-        val calendar = Calendar.getInstance()
-        val year = calendar[Calendar.YEAR]
-        val month = calendar[Calendar.MONTH]
-        val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
+        val constraintsBuilder =
+            CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointForward.now())
+                .build()
 
-        val dialog = DatePickerDialog(requireContext(), { _, pickedYear, pickedMonth, pickedDay ->
+        val datePicker =
+            MaterialDatePicker.Builder.datePicker()
+                .setTitleText(getString(R.string.select_date))
+                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                .setCalendarConstraints(constraintsBuilder)
+                .build()
 
-            val selectedCalendar = Calendar.getInstance()
-            selectedCalendar.set(pickedYear, pickedMonth, pickedDay)
-
-            val dateFormat = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
-            val formattedDate = dateFormat.format(selectedCalendar.time)
-
+        val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH)
+        datePicker.addOnPositiveButtonClickListener {
+            val selectedDate = Date(it)
+            val formattedDate = dateFormat.format(selectedDate)
             onDateSelected(formattedDate)
+        }
 
-        }, year, month, dayOfMonth)
+        datePicker.show(requireActivity().supportFragmentManager, "date_dialog")
 
-        dialog.datePicker.minDate = System.currentTimeMillis()
-        dialog.show()
     }
 
     private fun openClockDialog(onTimeSelected: (String) -> Unit) {
-        val time = Calendar.getInstance().time
-        val dialog = TimePickerDialog(requireContext(), { _, pickedHour, pickedMinute ->
 
-            time.hours = pickedHour
-            time.minutes = pickedMinute
-            val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-            val formattedTime = timeFormat.format(time)
+        val currentTime = Calendar.getInstance()
+        val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = currentTime.get(Calendar.MINUTE)
+
+        val timePicker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_12H)
+            .setHour(currentHour)
+            .setMinute(currentMinute)
+            .setTitleText(getString(R.string.select_time))
+            .build()
+
+        timePicker.addOnPositiveButtonClickListener {
+            val hour =
+                if (timePicker.hour == 0) 12 else if (timePicker.hour > 12) timePicker.hour - 12 else timePicker.hour
+            val minute = timePicker.minute
+            val amPm = if (timePicker.hour >= 12) "PM" else "AM"
+            val formattedTime = String.format(Locale.US, "$hour:$minute $amPm")
             onTimeSelected(formattedTime)
+        }
 
-        }, time.hours, time.minutes, false)
+        timePicker.show(requireActivity().supportFragmentManager, "clock_dialog")
 
-        dialog.show()
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
