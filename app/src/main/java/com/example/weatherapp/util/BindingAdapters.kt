@@ -1,13 +1,11 @@
 package com.example.weatherapp.util
 
-import android.location.Geocoder
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
 import com.example.weatherapp.R
 import com.example.weatherapp.sharedpref.SharedPrefManager
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
@@ -17,6 +15,8 @@ import java.time.format.TextStyle
 import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
+
+private const val TAG = "BindingAdapters"
 
 @BindingAdapter("url")
 fun loadImage(imageView: ImageView, url: String?) {
@@ -60,25 +60,8 @@ fun convertDateToDay(textView: TextView, time: Long) {
 
 @BindingAdapter(value = ["locationLat", "locationLon"], requireAll = true)
 fun getLocation(textView: TextView, lat: Double, lon: Double) {
-
-    try {
-        val lang = SharedPrefManager.getInstance(textView.context).getLanguage()
-        val geocoder = Geocoder(textView.context, Locale(lang))
-        val addresses = geocoder.getFromLocation(lat, lon, 1)
-        if (!addresses.isNullOrEmpty()) {
-            val address = addresses[0]
-            val currentAddress = StringBuilder("")
-            if (!address.subAdminArea.isNullOrBlank()) currentAddress.append(address.subAdminArea + ", ")
-            if (!address.adminArea.isNullOrBlank()) currentAddress.append(address.adminArea + ", ")
-            if (!address.countryName.isNullOrBlank()) currentAddress.append(address.countryName)
-            textView.text = currentAddress
-        } else {
-            textView.text = textView.context.getString(R.string.unknown_location)
-        }
-    } catch (e: IOException) {
-        e.printStackTrace()
-    }
-
+    val address = GeocoderUtil.getAddress(textView.context, lat, lon)
+    textView.text = address
 }
 
 @BindingAdapter(value = ["temp", "maxTemp"], requireAll = false)
