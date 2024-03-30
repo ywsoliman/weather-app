@@ -17,11 +17,11 @@ interface IRepository {
         lang: String? = "en"
     ): Flow<WeatherResponse>
 
+    fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>>
+    fun getMainResponse(): Flow<WeatherResponse?>
+    fun getAlarmAlerts(): Flow<List<AlarmItem>>
     suspend fun addPlaceToFavorites(place: FavoritePlaceDTO)
-    suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>>
     suspend fun deleteFromFavorites(place: FavoritePlaceDTO)
-    suspend fun getMainResponse(): Flow<WeatherResponse?>
-    suspend fun getAlarmAlerts(): Flow<List<AlarmItem>>
     suspend fun deleteFromAlerts(alarm: AlarmItem)
     suspend fun insertAlarmAlert(alarm: AlarmItem)
     suspend fun insertMainResponse(response: WeatherResponse)

@@ -1,10 +1,11 @@
-package com.example.weatherapp.util
+package com.example.weatherapp.sharedpref
 
 import android.content.Context
 import androidx.preference.PreferenceManager
+import com.example.weatherapp.util.Constants
 import com.google.android.gms.maps.model.LatLng
 
-class SharedPrefManager private constructor(context: Context) {
+class SharedPrefManager private constructor(context: Context) : ISharedPrefManager {
 
     private val sharedPref =
         context.getSharedPreferences(Constants.LATLNG_PREF, Context.MODE_PRIVATE)
@@ -28,7 +29,7 @@ class SharedPrefManager private constructor(context: Context) {
 
     }
 
-    fun setCoordinates(lat: Double, lon: Double) {
+    override fun setCoordinates(lat: Double, lon: Double) {
         sharedPref
             .edit()
             .putString(Constants.LATITUDE, lat.toString())
@@ -36,7 +37,7 @@ class SharedPrefManager private constructor(context: Context) {
             .apply()
     }
 
-    fun getCoordinates(): LatLng? {
+    override fun getCoordinates(): LatLng? {
         val lat = sharedPref.getString(Constants.LATITUDE, "") ?: ""
         val lon = sharedPref.getString(Constants.LONGITUDE, "") ?: ""
         return if (lat.isNotEmpty() && lon.isNotEmpty())
@@ -45,25 +46,19 @@ class SharedPrefManager private constructor(context: Context) {
             null
     }
 
-    fun setLocationSettings(location: String) {
+    override fun setLocationSettings(location: String) {
         settingsPref
             .edit()
             .putString("location", location)
             .apply()
     }
 
-    fun getLocation() = settingsPref.getString("location", "gps") ?: "gps"
+    override fun getLocation() = settingsPref.getString("location", "gps") ?: "gps"
 
-    fun getLanguage() = settingsPref.getString("language", "en") ?: "en"
+    override fun getLanguage() = settingsPref.getString("language", "en") ?: "en"
 
-    fun getTemperatureUnit() = settingsPref.getString("temperature", "kelvin") ?: "kelvin"
+    override fun getTemperatureUnit() = settingsPref.getString("temperature", "kelvin") ?: "kelvin"
 
-    fun getWindSpeedUnit() = settingsPref.getString("wind", "m/s") ?: "m/s"
-
-    fun convertTemperatureToUnits() = when (getTemperatureUnit()) {
-        "celsius" -> "metric"
-        "kelvin" -> "standard"
-        else -> "imperial"
-    }
+    override fun getWindSpeedUnit() = settingsPref.getString("wind", "m/s") ?: "m/s"
 
 }

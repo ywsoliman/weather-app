@@ -2,25 +2,27 @@ package com.example.weatherapp.ui.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.cachemanager.WeatherCache
+import com.example.weatherapp.connectivitymanager.IConnectivityRepository
 import com.example.weatherapp.models.WeatherResponse
-import com.example.weatherapp.network.ConnectivityRepository
-import com.example.weatherapp.network.WeatherCache
-import com.example.weatherapp.repository.Repository
+import com.example.weatherapp.repository.IRepository
+import com.example.weatherapp.sharedpref.ISharedPrefManager
 import com.example.weatherapp.util.ApiStatus
-import com.example.weatherapp.util.SharedPrefManager
 import com.github.matteobattilana.weather.PrecipType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Locale
 
 class HomeViewModel(
-    private val sharedPrefManager: SharedPrefManager,
-    connectivityRepository: ConnectivityRepository,
-    private val repo: Repository
+    private val sharedPrefManager: ISharedPrefManager,
+    connectivityRepository: IConnectivityRepository,
+    private val repo: IRepository
 ) :
     ViewModel() {
 
@@ -41,7 +43,9 @@ class HomeViewModel(
             isConnected.collectLatest { isOnline ->
 
                 if (!isOnline) {
-                    repo.getMainResponse().collectLatest { it?.let { processWeatherData(it) } }
+                    repo.getMainResponse().flowOn(Dispatchers.IO)
+                        .catch { _apiStatus.value = ApiStatus.Failure(it) }
+                        .collectLatest { it?.let { processWeatherData(it) } }
                 } else {
 
                     val lat = latitude.toString()
@@ -57,13 +61,13 @@ class HomeViewModel(
                         latitude,
                         longitude,
                         lang = sharedPrefManager.getLanguage(),
-                    )
-                        .collect {
+                    ).flowOn(Dispatchers.IO)
+                        .catch { _apiStatus.value = ApiStatus.Failure(it) }
+                        .collectLatest {
                             processWeatherData(it)
-                            refreshMainResponse(it)
                             WeatherCache.cacheWeather(key, it)
                             if (isMainResponse)
-                                WeatherCache.setMainResponse(it)
+                                refreshMainResponse(it)
                         }
                 }
             }

@@ -3,8 +3,8 @@ package com.example.weatherapp.ui.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.repository.Repository
-import com.example.weatherapp.network.ConnectivityRepository
-import com.example.weatherapp.util.SharedPrefManager
+import com.example.weatherapp.connectivitymanager.ConnectivityRepository
+import com.example.weatherapp.sharedpref.SharedPrefManager
 
 class HomeViewModelFactory(
     private val sharedPrefManager: SharedPrefManager,

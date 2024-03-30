@@ -7,6 +7,7 @@ import com.example.weatherapp.repository.IRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
@@ -19,8 +20,8 @@ class FavoriteViewModel(private val repo: IRepository) : ViewModel() {
     }
 
     fun getFavoritePlaces() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.getFavoritePlaces()
+        viewModelScope.launch {
+            repo.getFavoritePlaces().flowOn(Dispatchers.IO)
                 .collect {
                     _favoritePlaces.value = it
                 }

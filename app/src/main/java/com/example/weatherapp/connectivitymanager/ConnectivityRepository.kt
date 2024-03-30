@@ -1,21 +1,19 @@
-package com.example.weatherapp.network
+package com.example.weatherapp.connectivitymanager
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
-import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-private const val TAG = "ConnectivityRepository"
-
-class ConnectivityRepository(context: Context) {
+class ConnectivityRepository(context: Context) : IConnectivityRepository {
 
     private val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     private val _isConnected = MutableStateFlow(false)
-    val isConnected = _isConnected.asStateFlow()
+    override val isConnected: StateFlow<Boolean>
+        get() = _isConnected
 
     init {
 
@@ -23,12 +21,10 @@ class ConnectivityRepository(context: Context) {
             ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 _isConnected.value = true
-                Log.i(TAG, "onAvailable: isConnected = true")
             }
 
             override fun onLost(network: Network) {
                 _isConnected.value = false
-                Log.i(TAG, "onLost: isConnected = false")
             }
         })
 

@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.databinding.BindingAdapter
 import com.example.weatherapp.R
+import com.example.weatherapp.sharedpref.SharedPrefManager
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant

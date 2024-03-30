@@ -13,11 +13,11 @@ import com.example.weatherapp.R
 import com.example.weatherapp.db.WeatherDatabase
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.models.AlarmItem
-import com.example.weatherapp.network.ConnectivityRepository
+import com.example.weatherapp.connectivitymanager.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.util.Constants
-import com.example.weatherapp.util.SharedPrefManager
+import com.example.weatherapp.sharedpref.SharedPrefManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest

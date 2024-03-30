@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.ui.map.view.Mode
 import com.example.weatherapp.models.FavoritePlaceDTO
-import com.example.weatherapp.util.SharedPrefManager
+import com.example.weatherapp.sharedpref.SharedPrefManager
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch

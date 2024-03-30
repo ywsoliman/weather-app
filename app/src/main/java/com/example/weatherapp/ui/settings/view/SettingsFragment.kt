@@ -14,7 +14,7 @@ import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.weatherapp.R
 import com.example.weatherapp.ui.map.view.Mode
-import com.example.weatherapp.util.SharedPrefManager
+import com.example.weatherapp.sharedpref.SharedPrefManager
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult

@@ -45,7 +45,7 @@ class Repository private constructor(
         localDataSource.addPlaceToFavorite(place)
     }
 
-    override suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
+    override fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
         return localDataSource.getFavoritePlaces()
     }
 
@@ -53,11 +53,11 @@ class Repository private constructor(
         localDataSource.deleteFromFavorites(place)
     }
 
-    override suspend fun getMainResponse(): Flow<WeatherResponse?> {
+    override fun getMainResponse(): Flow<WeatherResponse?> {
         return localDataSource.getMainResponse()
     }
 
-    override suspend fun getAlarmAlerts(): Flow<List<AlarmItem>> {
+    override fun getAlarmAlerts(): Flow<List<AlarmItem>> {
         return localDataSource.getAlarmAlerts()
     }
 

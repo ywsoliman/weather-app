@@ -21,7 +21,7 @@ import com.example.weatherapp.databinding.FragmentFavoritesBinding
 import com.example.weatherapp.db.WeatherDatabase
 import com.example.weatherapp.db.WeatherLocalDataSource
 import com.example.weatherapp.models.FavoritePlaceDTO
-import com.example.weatherapp.network.ConnectivityRepository
+import com.example.weatherapp.connectivitymanager.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.ui.WeatherAnimationViewModel

@@ -28,7 +28,7 @@ class WeatherLocalDataSource(private val dao: WeatherDAO) : IWeatherLocalDataSou
         dao.insertFavorite(place)
     }
 
-    override suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
+    override fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
         return dao.getFavoritePlaces()
     }
 
@@ -36,11 +36,11 @@ class WeatherLocalDataSource(private val dao: WeatherDAO) : IWeatherLocalDataSou
         dao.delete(place)
     }
 
-    override suspend fun getMainResponse(): Flow<WeatherResponse?> {
+    override fun getMainResponse(): Flow<WeatherResponse?> {
         return dao.getMainResponse()
     }
 
-    override suspend fun getAlarmAlerts(): Flow<List<AlarmItem>> {
+    override fun getAlarmAlerts(): Flow<List<AlarmItem>> {
         return dao.getAlarmAlerts()
     }
 

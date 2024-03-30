@@ -31,7 +31,7 @@ import com.example.weatherapp.ui.WeatherAnimationViewModel
 import com.example.weatherapp.ui.alerts.AndroidAlarmScheduler
 import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModel
 import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModelFactory
-import com.example.weatherapp.util.SharedPrefManager
+import com.example.weatherapp.sharedpref.SharedPrefManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -184,7 +184,7 @@ class AlertsFragment : Fragment() {
 
     }
 
-    private fun handleDeleteAlertButton(it: AlarmItem) {
+    private fun handleDeleteAlertButton(alarmItem: AlarmItem) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.delete_selected_alert))
             .setMessage(getString(R.string.selected_alert_will_be_permanently_removed_and_you_won_t_get_notified_of_the_weather_details_at_that_time))
@@ -192,7 +192,8 @@ class AlertsFragment : Fragment() {
                 dialog.dismiss()
             }
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
-                alertViewModel.deleteAlarmAlert(it)
+                alarmScheduler.cancel(alarmItem)
+                alertViewModel.deleteAlarmAlert(alarmItem)
             }
             .show()
     }

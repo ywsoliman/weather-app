@@ -75,7 +75,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:2.5.3")
 
     // Coroutine
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")

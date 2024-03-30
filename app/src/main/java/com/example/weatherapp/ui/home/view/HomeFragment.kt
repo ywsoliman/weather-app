@@ -26,14 +26,14 @@ import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.db.WeatherDatabase
 import com.example.weatherapp.db.WeatherLocalDataSource
-import com.example.weatherapp.network.ConnectivityRepository
+import com.example.weatherapp.connectivitymanager.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.repository.Repository
 import com.example.weatherapp.ui.WeatherAnimationViewModel
 import com.example.weatherapp.ui.home.viewmodel.HomeViewModel
 import com.example.weatherapp.ui.home.viewmodel.HomeViewModelFactory
 import com.example.weatherapp.util.ApiStatus
-import com.example.weatherapp.util.SharedPrefManager
+import com.example.weatherapp.sharedpref.SharedPrefManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -72,17 +72,6 @@ class HomeFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        if (SharedPrefManager.getInstance(requireContext()).getCoordinates() == null) {
-            if (checkPermissions()) {
-                if (isLocationEnabled())
-                    getFreshLocation()
-                else
-                    enableLocationService()
-            } else
-                askForLocation()
-        }
-
         return binding.root
     }
 
@@ -96,13 +85,20 @@ class HomeFragment : Fragment() {
             homeViewModel.setLocationCoordinates(
                 selectedFavoritePlace.latitude,
                 selectedFavoritePlace.longitude,
-                false
+                false,
             )
         } else {
-            val coord = SharedPrefManager.getInstance(requireContext()).getCoordinates()
-            Log.i(TAG, "onViewCreated: else condition $coord")
-            if (coord != null) {
-                homeViewModel.setLocationCoordinates(coord.latitude, coord.longitude, true)
+            if (SharedPrefManager.getInstance(requireContext()).getLocation() == "gps") {
+                handleGPSLocation()
+            } else {
+                val coord = SharedPrefManager.getInstance(requireContext()).getCoordinates()
+                if (coord != null) {
+                    homeViewModel.setLocationCoordinates(
+                        coord.latitude,
+                        coord.longitude,
+                        true,
+                    )
+                }
             }
         }
 
@@ -169,6 +165,17 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    private fun handleGPSLocation() {
+        if (checkPermissions()) {
+            if (isLocationEnabled())
+                getFreshLocation()
+            else
+                enableLocationService()
+        } else
+            askForLocation()
+    }
+
 
     private fun enableLocationService() {
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
