@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui.home.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.cachemanager.WeatherCache
@@ -10,14 +11,23 @@ import com.example.weatherapp.sharedpref.ISharedPrefManager
 import com.example.weatherapp.util.ApiStatus
 import com.github.matteobattilana.weather.PrecipType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Locale
+
+private const val TAG = "HomeViewModel"
 
 class HomeViewModel(
     private val sharedPrefManager: ISharedPrefManager,
@@ -37,7 +47,29 @@ class HomeViewModel(
 
     val isConnected = connectivityRepository.isConnected
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun getCurrentTime(): Flow<String> = _weather.flatMapLatest { weatherResponse ->
+        if (weatherResponse != null) {
+            val locale = Locale(sharedPrefManager.getLanguage())
+            val formatter = DateTimeFormatter.ofPattern("EEEE, d MMM HH:mm:ss", locale)
+            val zoneId = ZoneId.of(weatherResponse.timezone)
+            flow {
+                while (true) {
+                    val currentTime = LocalDateTime.now(zoneId).format(formatter)
+                    emit(currentTime)
+                    delay(1000)
+                }
+            }
+        } else {
+            flow {
+                emit("00:00:00")
+            }
+        }
+    }
+
     fun setLocationCoordinates(latitude: Double, longitude: Double, isMainResponse: Boolean) {
+
+        Log.i(TAG, "setLocationCoordinates: lat = $latitude, lon = $longitude")
 
         viewModelScope.launch(Dispatchers.IO) {
             isConnected.collectLatest { isOnline ->
@@ -99,15 +131,4 @@ class HomeViewModel(
             else -> _weatherState.value = PrecipType.CLEAR
         }
     }
-
-    fun getCurrentDateFormatted(): String {
-        val calendar = Calendar.getInstance()
-        val dayOfWeek =
-            calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault())
-        val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-        val month = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())
-        return "$dayOfWeek, $dayOfMonth $month"
-    }
-
-
 }

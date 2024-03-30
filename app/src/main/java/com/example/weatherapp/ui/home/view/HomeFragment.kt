@@ -23,17 +23,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.weatherapp.R
+import com.example.weatherapp.connectivitymanager.ConnectivityRepository
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.db.WeatherDatabase
 import com.example.weatherapp.db.WeatherLocalDataSource
-import com.example.weatherapp.connectivitymanager.ConnectivityRepository
 import com.example.weatherapp.network.WeatherRemoteDataSource
 import com.example.weatherapp.repository.Repository
+import com.example.weatherapp.sharedpref.SharedPrefManager
 import com.example.weatherapp.ui.WeatherAnimationViewModel
 import com.example.weatherapp.ui.home.viewmodel.HomeViewModel
 import com.example.weatherapp.ui.home.viewmodel.HomeViewModelFactory
 import com.example.weatherapp.util.ApiStatus
-import com.example.weatherapp.sharedpref.SharedPrefManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -161,6 +161,14 @@ class HomeFragment : Fragment() {
                 homeViewModel.weatherState.collectLatest {
                     binding.weatherAnimation.setWeatherData(it)
                     weatherAnimationViewModel.setWeatherState(it)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.getCurrentTime().collectLatest {
+                    binding.currentDateAndTime.text = it
                 }
             }
         }
