@@ -37,7 +37,7 @@ interface WeatherDAO {
     @Delete
     suspend fun deleteAlarmAlert(alarm: AlarmItem)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAlarmAlert(alarm: AlarmItem)
 
 }
