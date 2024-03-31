@@ -6,6 +6,31 @@
         <State />
       </entry>
       <entry key="app">
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/Pixel_3a_API_34.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-03-30T20:25:42.240616Z" />
+        </State>
+      </entry>
+      <entry key="deleteMainResponse()">
+        <State />
+      </entry>
+      <entry key="deleteMainResponse() (1)">
+        <State />
+      </entry>
+      <entry key="insertMainResponse()">
+        <State />
+      </entry>
+      <entry key="insertMainResponse() (1)">
         <State />
       </entry>
     </value>

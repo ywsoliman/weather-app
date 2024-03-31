@@ -1,20 +1,26 @@
 package com.example.weatherapp.db
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.MediumTest
 import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.FavoritePlaceDTO
+import com.example.weatherapp.models.WeatherResponse
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDateTime
 
 @MediumTest
 class WeatherLocalDataSourceTest {
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var database: WeatherDatabase
     private lateinit var localDataSource: WeatherLocalDataSource
@@ -79,6 +85,25 @@ class WeatherLocalDataSourceTest {
         localDataSource.deleteFromAlerts(alarmItem)
         val allAlarmItems = localDataSource.getAlarmAlerts().first()
         assertThat(allAlarmItems).doesNotContain(alarmItem)
+    }
+
+    @Test
+    fun insertMainResponse() = runTest {
+        val response = WeatherResponse(11.1, 22.2)
+        localDataSource.insertMainResponse(response)
+        val mainResponse = localDataSource.getMainResponse().first()
+        assertThat(mainResponse).isNotNull()
+        assertThat(mainResponse).isEqualTo(response)
+    }
+
+    @Test
+    fun deleteMainResponse() = runTest {
+        val response = WeatherResponse(11.1, 22.2)
+        localDataSource.insertMainResponse(response)
+        localDataSource.deleteOldResponse()
+        val mainResponse = localDataSource.getMainResponse().first()
+        assertThat(mainResponse).isNull()
+        assertThat(mainResponse).isNotEqualTo(response)
     }
 
 }

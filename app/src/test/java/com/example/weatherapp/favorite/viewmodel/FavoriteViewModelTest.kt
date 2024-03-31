@@ -1,10 +1,12 @@
 package com.example.weatherapp.favorite.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.weatherapp.MainDispatcherRule
 import com.example.weatherapp.models.FakeRepository
 import com.example.weatherapp.models.FavoritePlaceDTO
 import com.example.weatherapp.ui.favorite.viewmodel.FavoriteViewModel
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -15,6 +17,10 @@ class FavoriteViewModelTest {
 
     private lateinit var viewModel: FavoriteViewModel
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -24,7 +30,7 @@ class FavoriteViewModelTest {
     }
 
     @Test
-    fun getFavoritePlaces() = runTest {
+    fun insertFavoritePlace() = runTest {
 
         val firstFavoritePlace = FavoritePlaceDTO(
             22.2,

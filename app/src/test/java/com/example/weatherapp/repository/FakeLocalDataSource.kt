@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOf
 class FakeLocalDataSource(
     private val favorites: MutableList<FavoritePlaceDTO> = mutableListOf(),
     private val alerts: MutableList<AlarmItem> = mutableListOf(),
-    private val weatherResponse: WeatherResponse
+    private var weatherResponse: WeatherResponse?
 ) :
     IWeatherLocalDataSource {
 
@@ -18,7 +18,7 @@ class FakeLocalDataSource(
         favorites.add(place)
     }
 
-    override suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
+    override fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
         return flowOf(favorites)
     }
 
@@ -26,11 +26,11 @@ class FakeLocalDataSource(
         favorites.remove(place)
     }
 
-    override suspend fun getMainResponse(): Flow<WeatherResponse?> {
+    override fun getMainResponse(): Flow<WeatherResponse?> {
         return flowOf(weatherResponse)
     }
 
-    override suspend fun getAlarmAlerts(): Flow<List<AlarmItem>> {
+    override fun getAlarmAlerts(): Flow<List<AlarmItem>> {
         return flowOf(alerts)
     }
 
@@ -40,5 +40,13 @@ class FakeLocalDataSource(
 
     override suspend fun insertAlarmAlert(alarm: AlarmItem) {
         alerts.add(alarm)
+    }
+
+    override suspend fun insertMainResponse(response: WeatherResponse) {
+        weatherResponse = response
+    }
+
+    override suspend fun deleteOldResponse() {
+        weatherResponse = null
     }
 }

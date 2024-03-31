@@ -3,6 +3,7 @@ package com.example.weatherapp.models
 import com.example.weatherapp.repository.IRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 
 class FakeRepository : IRepository {
 
@@ -12,6 +13,7 @@ class FakeRepository : IRepository {
     private val alarmAlerts = mutableListOf<AlarmItem>()
     private val observableAlarmAlerts = MutableStateFlow<List<AlarmItem>>(alarmAlerts)
 
+    private var weatherResponse: WeatherResponse? = null
 
     override suspend fun getWeather(
         lat: Double,
@@ -21,7 +23,7 @@ class FakeRepository : IRepository {
         units: String?,
         lang: String?
     ): Flow<WeatherResponse> {
-        TODO("Not yet implemented")
+        return flowOf(WeatherResponse(lat, lon))
     }
 
     override suspend fun addPlaceToFavorites(place: FavoritePlaceDTO) {
@@ -29,7 +31,7 @@ class FakeRepository : IRepository {
         refreshFavorites()
     }
 
-    override suspend fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
+    override fun getFavoritePlaces(): Flow<List<FavoritePlaceDTO>> {
         return observableFavoritePlaces
     }
 
@@ -38,11 +40,11 @@ class FakeRepository : IRepository {
         refreshFavorites()
     }
 
-    override suspend fun getMainResponse(): Flow<WeatherResponse?> {
-        TODO("Not yet implemented")
+    override fun getMainResponse(): Flow<WeatherResponse?> {
+        return flowOf(WeatherResponse(0.0, 0.0))
     }
 
-    override suspend fun getAlarmAlerts(): Flow<List<AlarmItem>> {
+    override fun getAlarmAlerts(): Flow<List<AlarmItem>> {
         return observableAlarmAlerts
     }
 
@@ -56,9 +58,18 @@ class FakeRepository : IRepository {
         refreshAlerts()
     }
 
+    override suspend fun insertMainResponse(response: WeatherResponse) {
+        weatherResponse = response
+    }
+
+    override suspend fun deleteOldResponse() {
+        weatherResponse = null
+    }
+
     private fun refreshFavorites() {
         observableFavoritePlaces.value = favoritePlaces.toList()
     }
+
     private fun refreshAlerts() {
         observableAlarmAlerts.value = alarmAlerts.toList()
     }

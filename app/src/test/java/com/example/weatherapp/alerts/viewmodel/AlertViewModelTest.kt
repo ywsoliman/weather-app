@@ -1,10 +1,12 @@
 package com.example.weatherapp.alerts.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.weatherapp.MainDispatcherRule
 import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.models.FakeRepository
 import com.example.weatherapp.ui.alerts.viewmodel.AlertViewModel
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -18,6 +20,10 @@ private const val LONGITUDE = 22.2
 class AlertViewModelTest {
 
     private lateinit var viewModel: AlertViewModel
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()

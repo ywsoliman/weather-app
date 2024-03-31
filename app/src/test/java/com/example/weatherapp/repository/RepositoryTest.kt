@@ -99,6 +99,23 @@ class RepositoryTest {
     }
 
     @Test
+    fun insertResponse() = runTest {
+        val response = WeatherResponse(0.0, 0.0)
+        repository.insertMainResponse(response)
+        val mainResponse = repository.getMainResponse().first()
+        assertThat(mainResponse).isEqualTo(response)
+    }
+
+    @Test
+    fun deleteResponse() = runTest {
+        val response = WeatherResponse(0.0, 0.0)
+        repository.insertMainResponse(response)
+        repository.deleteOldResponse()
+        val mainResponse = repository.getMainResponse().first()
+        assertThat(mainResponse).isNotEqualTo(response)
+    }
+
+    @Test
     fun getWeather() = runTest {
         val currentWeather = repository.getWeather(11.1, 22.2).first()
         assertThat(currentWeather).isEqualTo(weatherResponse)
