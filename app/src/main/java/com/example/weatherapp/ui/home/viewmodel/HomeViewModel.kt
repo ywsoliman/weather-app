@@ -1,6 +1,5 @@
 package com.example.weatherapp.ui.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.cachemanager.WeatherCache
@@ -26,8 +25,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-
-private const val TAG = "HomeViewModel"
 
 class HomeViewModel(
     private val sharedPrefManager: ISharedPrefManager,
@@ -68,8 +65,6 @@ class HomeViewModel(
     }
 
     fun setLocationCoordinates(latitude: Double, longitude: Double, isMainResponse: Boolean) {
-
-        Log.i(TAG, "setLocationCoordinates: lat = $latitude, lon = $longitude")
 
         viewModelScope.launch(Dispatchers.IO) {
             isConnected.collectLatest { isOnline ->

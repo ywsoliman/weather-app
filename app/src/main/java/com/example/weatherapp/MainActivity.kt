@@ -8,8 +8,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-private const val TAG = "MainActivity"
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController

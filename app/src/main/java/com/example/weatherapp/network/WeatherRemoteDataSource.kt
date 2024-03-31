@@ -4,8 +4,6 @@ import com.example.weatherapp.models.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-private const val TAG = "WeatherRemoteDataSource"
-
 object WeatherRemoteDataSource : IWeatherRemoteDataSource {
 
     private val dao = APIClient.weatherAPI

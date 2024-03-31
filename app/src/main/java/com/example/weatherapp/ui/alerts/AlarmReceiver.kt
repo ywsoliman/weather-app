@@ -9,7 +9,6 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.weatherapp.R
 import com.example.weatherapp.connectivitymanager.ConnectivityRepository
@@ -29,7 +28,6 @@ import kotlinx.coroutines.launch
 
 
 private const val CHANNEL_ID = "1234"
-private const val TAG = "AlarmReceiver"
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -41,7 +39,6 @@ class AlarmReceiver : BroadcastReceiver() {
                 AlarmItem::class.java
             ) else intent?.getSerializableExtra(Constants.ALARM_ITEM) as AlarmItem
 
-        Log.i(TAG, "onReceive: currentAlarmItem = $currentAlarmItem")
 
         context?.let { myContext ->
 

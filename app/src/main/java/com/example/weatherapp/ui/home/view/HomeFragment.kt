@@ -9,7 +9,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,8 +42,6 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-private const val TAG = "HomeFragment"
 
 private const val REQUEST_LOCATION_CODE = 2005
 
@@ -132,7 +129,6 @@ class HomeFragment : Fragment() {
                             nextDaysForecastAdapter.submitList(
                                 apiStatus.response.daily.subList(1, 7)
                             )
-                            Log.i(TAG, "handleLocationGranted: $apiStatus")
                         }
 
                         is ApiStatus.Failure -> {
@@ -143,13 +139,11 @@ class HomeFragment : Fragment() {
                             )
                                 .setAnchorView(R.id.bottomNavigationView)
                                 .show()
-                            Log.i(TAG, "handleLocationGranted: $apiStatus")
                         }
 
                         is ApiStatus.Loading -> {
                             binding.weatherDetails.visibility = View.GONE
                             binding.progressBar.visibility = View.VISIBLE
-                            Log.i(TAG, "handleLocationGranted: $apiStatus")
                         }
                     }
                 }
@@ -225,7 +219,6 @@ class HomeFragment : Fragment() {
                     val longitude = locationResult.lastLocation?.longitude
                     val latitude = locationResult.lastLocation?.latitude
                     if (latitude != null && longitude != null) {
-                        Log.i(TAG, "onLocationResult: $latitude, $longitude")
                         SharedPrefManager.getInstance(requireContext())
                             .setCoordinates(latitude, longitude)
                         homeViewModel.setLocationCoordinates(latitude, longitude, true)

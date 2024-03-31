@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
-import com.example.weatherapp.models.AlarmItem
 import com.example.weatherapp.databinding.ItemAlarmAlertBinding
+import com.example.weatherapp.models.AlarmItem
 
 class AlertsAdapter(private val onDeleteAlarm: (AlarmItem) -> Unit) :
     ListAdapter<AlarmItem, AlertsAdapter.AlarmViewHolder>(AlarmDiffUtil()) {

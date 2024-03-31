@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.WeatherDayItemBinding
 import com.example.weatherapp.models.Daily
-import com.example.weatherapp.models.WeatherResponse
 
 class NextDaysWeatherAdapter :
     ListAdapter<Daily, NextDaysWeatherAdapter.NextDaysViewHolder>(NextDaysDiffUtil()) {

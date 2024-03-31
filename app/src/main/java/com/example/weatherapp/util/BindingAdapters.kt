@@ -16,8 +16,6 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.roundToInt
 
-private const val TAG = "BindingAdapters"
-
 @BindingAdapter("url")
 fun loadImage(imageView: ImageView, url: String?) {
 

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.WeatherTimeItemBinding
 import com.example.weatherapp.models.Hourly
-import com.example.weatherapp.models.WeatherResponse
 
 class HourlyWeatherAdapter :
     ListAdapter<Hourly, HourlyWeatherAdapter.TimeViewHolder>(TimeDiffUtil()) {
